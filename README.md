@@ -1,4 +1,4 @@
-# hirikana
+# HiriKana
 
 A new Flutter project.
 
