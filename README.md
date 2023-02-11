@@ -4,13 +4,16 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+First have flutter installed and run flutter doctor to make sure all platform dependencies setup. https://docs.flutter.dev/get-started/install
 
-A few resources to get you started if this is your first Flutter project:
+Next open the terminal and go to peoject directory.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```
+$ npm install
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Next to run application on VScode have phone emulator installed and launched it. Afterwards while VScode is open press F5 to start debugger.
+
+For VScode have Flutter extension installed.
+
+Application should be running at this point. 
