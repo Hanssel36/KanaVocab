@@ -79,7 +79,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         change = !change;
                       });
                     },
-                    child: Text(change ? "Hiragana" : "Katakana")),
+                    child: Text(
+                        style: TextStyle(fontSize: 20),
+                        change ? "Hiragana き" : "Katakana \u30A2")),
               ],
             ),
             Row(
