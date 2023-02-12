@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hirikana/chart.dart';
+import 'package:hirikana/practice/choice.dart';
+import 'package:hirikana/practice/keyboard.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,6 +21,18 @@ final GoRouter _router = GoRouter(
           path: 'charts',
           builder: (BuildContext context, GoRouterState state) {
             return const ChartsScreen();
+          },
+        ),
+        GoRoute(
+          path: 'choice',
+          builder: (BuildContext context, GoRouterState state) {
+            return const ChoiceScreen();
+          },
+        ),
+        GoRoute(
+          path: 'keyboard',
+          builder: (BuildContext context, GoRouterState state) {
+            return const KeyboardScreen();
           },
         ),
       ],
@@ -66,6 +80,31 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
                     },
                     child: Text(change ? "Hiragana" : "Katakana")),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                    decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 100, 99, 99),
+                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                    child: IconButton(
+                        iconSize: 75,
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onPressed: () => context.go('/choice'),
+                        icon: Icon(Icons.gamepad))),
+                Container(
+                    decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 100, 99, 99),
+                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                    child: IconButton(
+                        iconSize: 75,
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onPressed: () => context.go('/keyboard'),
+                        icon: Icon(Icons.keyboard)))
               ],
             ),
             Row(
