@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,10 +9,10 @@ class ChoiceScreen extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
-        title: Text("Choice"),
+        title: const Text("Choice"),
         leading: IconButton(
           onPressed: () => context.go("/"),
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
         ),
       )),
     );

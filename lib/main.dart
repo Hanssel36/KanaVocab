@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hirikana/assests/colors.dart';
 import 'package:hirikana/chart.dart';
 import 'package:hirikana/practice/choice.dart';
 import 'package:hirikana/practice/keyboard.dart';
+import 'package:hirikana/practice/selection.dart';
 
 void main() {
   runApp(MyApp());
@@ -33,6 +35,12 @@ final GoRouter _router = GoRouter(
           path: 'keyboard',
           builder: (BuildContext context, GoRouterState state) {
             return const KeyboardScreen();
+          },
+        ),
+        GoRoute(
+          path: 'selection',
+          builder: (BuildContext context, GoRouterState state) {
+            return const SelectionScreen();
           },
         ),
       ],
@@ -66,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(),
-        backgroundColor: const Color.fromARGB(255, 42, 42, 42),
+        backgroundColor: backGroundDark,
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -88,25 +96,25 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Container(
-                    decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 100, 99, 99),
+                    decoration: const BoxDecoration(
+                        color: tiles,
                         borderRadius: BorderRadius.all(Radius.circular(20.0))),
                     child: IconButton(
                         iconSize: 75,
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
-                        onPressed: () => context.go('/choice'),
-                        icon: Icon(Icons.gamepad))),
+                        onPressed: () => context.go('/selection'),
+                        icon: const Icon(Icons.gamepad))),
                 Container(
-                    decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 100, 99, 99),
+                    decoration: const BoxDecoration(
+                        color: tiles,
                         borderRadius: BorderRadius.all(Radius.circular(20.0))),
                     child: IconButton(
                         iconSize: 75,
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onPressed: () => context.go('/keyboard'),
-                        icon: Icon(Icons.keyboard)))
+                        icon: const Icon(Icons.keyboard)))
               ],
             ),
             Row(

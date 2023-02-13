@@ -9,10 +9,10 @@ class KeyboardScreen extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
-        title: Text("Keyboard"),
+        title: const Text("Keyboard"),
         leading: IconButton(
           onPressed: () => context.go("/"),
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
         ),
       )),
     );
