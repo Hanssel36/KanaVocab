@@ -7,7 +7,7 @@ import 'package:hirikana/practice/keyboard.dart';
 import 'package:hirikana/practice/selection.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 /// The route configuration.
@@ -16,7 +16,7 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return HomeScreen();
+        return const HomeScreen();
       },
       routes: <RouteBase>[
         GoRoute(
@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({super.key});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -88,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
                     },
                     child: Text(
-                        style: TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 20),
                         change ? "Hiragana き" : "Katakana \u30A2")),
               ],
             ),

@@ -8,13 +8,14 @@ class ChartsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-          appBar: AppBar(
-        title: Text("Hiragana"),
-        leading: IconButton(
-          onPressed: () => context.go("/"),
-          icon: Icon(Icons.arrow_back),
+        appBar: AppBar(
+          title: const Text("Hiragana"),
+          leading: IconButton(
+            onPressed: () => context.go("/"),
+            icon: const Icon(Icons.arrow_back),
+          ),
         ),
-      )),
+      ),
     );
   }
 }

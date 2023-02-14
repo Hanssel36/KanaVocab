@@ -1,5 +1,5 @@
 void main() {
-  List<Map<String, String>> hira_chars = [
+  List<Map<String, String>> hiraChars = [
     {"あ": "a"},
     {"い": "i"},
     {"う": "u"},
@@ -122,7 +122,7 @@ void main() {
   ];
 
   // Print the Hiragana characters and their corresponding sounds
-  for (var char in hira_chars) {
+  for (var char in hiraChars) {
     print("${char.keys.first}: ${char.values.first}");
   }
 }
