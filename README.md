@@ -1,6 +1,20 @@
 # HiriKana
 
-A new Flutter project.
+HiriKana is a Flutter based project that is used to learn Hiragana and Katakana, as well as have the ability to create your own flash cards to memorize words.
+
+## Features
+
+- Easy access to Hiragana and Katakana charts
+
+- Quiz modes that test your knowledge of Hiragana and Katakana
+
+- Personal flash cards that can be used to be tested on
+
+- Simple UI
+
+## Built With
+
+- Flutter - SDK
 
 ## Getting Started
 
