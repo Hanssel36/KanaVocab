@@ -72,67 +72,84 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(
+          backgroundColor: backGroundDark,
+          elevation: 0,
+        ),
         backgroundColor: backGroundDark,
         body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        change = !change;
-                      });
-                    },
-                    child: Text(
-                        style: const TextStyle(fontSize: 20),
-                        change ? "Hiragana き" : "Katakana \u30A2")),
-              ],
+            Padding(
+              padding: const EdgeInsets.all(100.0),
+              child: ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(tiles),
+                    padding:
+                        MaterialStateProperty.all(const EdgeInsets.all(10))),
+                onPressed: () {
+                  setState(() {
+                    change = !change;
+                  });
+                },
+                child: Text(
+                    style: const TextStyle(fontSize: 30),
+                    change ? "Hiragana き" : "Katakana \u30A2"),
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Container(
-                    decoration: const BoxDecoration(
-                        color: tiles,
-                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                    child: IconButton(
-                        iconSize: 75,
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        onPressed: () => context.go('/selection'),
-                        icon: const Icon(Icons.gamepad))),
+                  decoration: const BoxDecoration(
+                    color: tiles,
+                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                  ),
+                  child: IconButton(
+                    iconSize: 75,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onPressed: () => context.go('/selection'),
+                    icon: const Icon(Icons.gamepad),
+                  ),
+                ),
                 Container(
-                    decoration: const BoxDecoration(
-                        color: tiles,
-                        borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                    child: IconButton(
-                        iconSize: 75,
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        onPressed: () => context.go('/keyboard'),
-                        icon: const Icon(Icons.keyboard)))
+                  decoration: const BoxDecoration(
+                      color: tiles,
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  child: IconButton(
+                      iconSize: 75,
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onPressed: () => context.go('/keyboard'),
+                      icon: const Icon(Icons.keyboard)),
+                )
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                    onPressed: () => context.go('/charts'),
-                    iconSize: 50,
-                    icon: const Icon(
-                      Icons.bookmark_outline,
-                    )),
-                IconButton(
-                    onPressed: () {},
-                    iconSize: 50,
-                    icon: const Icon(
-                      Icons.settings_outlined,
-                    )),
-              ],
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: () => context.go('/charts'),
+                      iconSize: 50,
+                      icon: const Icon(
+                        Icons.bookmark_outline,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      iconSize: 50,
+                      icon: const Icon(
+                        Icons.settings_outlined,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

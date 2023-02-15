@@ -19,6 +19,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
       home: Scaffold(
         backgroundColor: backGroundDark,
         appBar: AppBar(
+          backgroundColor: backGroundDark,
           title: const Text("Selection"),
           leading: IconButton(
             onPressed: () => context.go("/"),
