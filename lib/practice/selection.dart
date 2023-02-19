@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hirikana/assests/colors.dart';
+import 'package:hirikana/practice/hiragana_select.dart';
 
 class SelectionScreen extends StatefulWidget {
-  const SelectionScreen({super.key});
+  final String mode;
+  const SelectionScreen({super.key, required this.mode});
 
   @override
   State<SelectionScreen> createState() => _SelectionScreenState();
@@ -20,7 +22,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
         backgroundColor: backGroundDark,
         appBar: AppBar(
           backgroundColor: backGroundDark,
-          title: const Text("Selection"),
+          title: const Text("Selection Keyboard"),
           leading: IconButton(
             onPressed: () => context.go("/"),
             icon: const Icon(Icons.arrow_back),
@@ -65,6 +67,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
                 },
               ),
             ),
+            HiraganaChart(mode: widget.mode),
+            Text(" Here ${widget.mode}"),
           ],
         ),
       ),

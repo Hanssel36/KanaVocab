@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class ChoiceScreen extends StatelessWidget {
-  const ChoiceScreen({super.key});
+class ChoiceScreen extends StatefulWidget {
+  final Set<int> lines;
+  const ChoiceScreen({super.key, required this.lines});
 
+  @override
+  State<ChoiceScreen> createState() => _ChoiceScreenState();
+}
+
+class _ChoiceScreenState extends State<ChoiceScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

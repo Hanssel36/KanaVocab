@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hirikana/assests/colors.dart';
 import 'package:hirikana/chart.dart';
-import 'package:hirikana/practice/choice.dart';
-import 'package:hirikana/practice/keyboard.dart';
 import 'package:hirikana/practice/selection.dart';
 
 void main() {
@@ -26,21 +24,9 @@ final GoRouter _router = GoRouter(
           },
         ),
         GoRoute(
-          path: 'choice',
+          path: 'selection/:mode',
           builder: (BuildContext context, GoRouterState state) {
-            return const ChoiceScreen();
-          },
-        ),
-        GoRoute(
-          path: 'keyboard',
-          builder: (BuildContext context, GoRouterState state) {
-            return const KeyboardScreen();
-          },
-        ),
-        GoRoute(
-          path: 'selection',
-          builder: (BuildContext context, GoRouterState state) {
-            return const SelectionScreen();
+            return SelectionScreen(mode: state.params["mode"]!);
           },
         ),
       ],
@@ -68,7 +54,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool change = true;
-
+  String option = "";
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -110,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     iconSize: 75,
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
-                    onPressed: () => context.go('/selection'),
+                    onPressed: () => {context.go('/selection/choice')},
                     icon: const Icon(Icons.gamepad),
                   ),
                 ),
@@ -122,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       iconSize: 75,
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
-                      onPressed: () => context.go('/keyboard'),
+                      onPressed: () => context.go('/selection/keyboard'),
                       icon: const Icon(Icons.keyboard)),
                 )
               ],
