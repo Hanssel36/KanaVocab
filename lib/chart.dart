@@ -49,44 +49,6 @@ class ChartsScreen extends StatelessWidget {
   }
 }
 
-// Column makeChart(Map<String, String> input) {
-//   return Column(
-//     mainAxisAlignment: MainAxisAlignment.start,
-//     children: [
-//       for (var i = 0; i < input.keys.toList().length / 5; i++)
-//         Row(
-//           mainAxisAlignment: MainAxisAlignment.start,
-//           children: [
-//             for (var j = i * 5; j < (i * 5) + 5; j++)
-//               Container(
-//                 decoration: const BoxDecoration(
-//                   color: tiles,
-//                   borderRadius: BorderRadius.all(
-//                     Radius.circular(5.0),
-//                   ),
-//                 ),
-
-//                 // width: 50,
-//                 // height: 50,
-//                 child: Column(
-//                   children: [
-//                     Text(
-//                       style: const TextStyle(
-//                         color: Colors.white,
-//                         fontSize: 50,
-//                       ),
-//                       input.keys.toList()[j],
-//                     ),
-//                     Text(input[input.keys.toList()[j]].toString())
-//                   ],
-//                 ),
-//               )
-//           ],
-//         ),
-//     ],
-//   );
-// }
-
 Column makeChart(Map<String, List> input) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
