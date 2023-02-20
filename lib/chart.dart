@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hirikana/assests/colors.dart';
@@ -10,10 +8,9 @@ class ChartsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Map<String, String> text = {"a": "あ", "i": "い", "u": "う", "e": "え"};
-    h_c.hiragana_character_map.forEach((key, value) {
-      print('$key: $value');
-    });
+    // h_c.variationsCharacterMap.forEach((key, value) {
+    //   print('$key: $value');
+    // });
 
     return MaterialApp(
       home: Scaffold(
@@ -25,39 +22,67 @@ class ChartsScreen extends StatelessWidget {
           ),
         ),
         backgroundColor: backGroundDark,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        body: ListView(
           children: [
-            for (var i = 0; i < 10; i++)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  for (var j = i * 5; j < (i * 5) + 5; j++)
-                    Container(
-                      decoration: const BoxDecoration(
-                        color: tiles,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5.0),
-                        ),
-                      ),
+            const Text(
+                style: TextStyle(fontSize: 30),
+                textAlign: TextAlign.center,
+                "HIRAGANA"),
+            makeChart(h_c.hiraganaMap),
+            const Text(
+                style: TextStyle(fontSize: 30),
+                textAlign: TextAlign.center,
+                "VARIATIONS"),
+            makeChart(h_c.variationMap),
+            const Text(
+                style: TextStyle(fontSize: 30),
+                textAlign: TextAlign.center,
+                "Combinations"),
+            makeChart(h_c.combinationMap),
 
-                      // width: 50,
-                      // height: 50,
-                      child: Text(
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 40,
-                        ),
-                        h_c.hiragana_character_map[
-                                h_c.hiragana_character_map.keys.toList()[j]]
-                            .toString(),
-                      ),
-                    )
-                ],
-              ),
+            //makeChart(h_c.hiraganaCharacterMap),
+            // makeChart(h_c.variationsCharacterMap)
           ],
         ),
       ),
     );
   }
+}
+
+Column makeChart(Map<String, List> input) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      for (var i in input.keys)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            for (var j in input[i]!)
+              Container(
+                decoration: const BoxDecoration(
+                  color: tiles,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(5.0),
+                  ),
+                ),
+
+                // width: 50,
+                // height: 50,
+                child: Column(
+                  children: [
+                    Text(
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 50,
+                      ),
+                      "$j",
+                    ),
+                    Text(h_c.hiraganaCharacterMap[j] as String)
+                  ],
+                ),
+              )
+          ],
+        ),
+    ],
+  );
 }
