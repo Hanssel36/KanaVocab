@@ -82,7 +82,9 @@ class _KeyboardScreenState extends State<KeyboardScreen> {
                   border: OutlineInputBorder(),
                 ),
                 onSubmitted: (value) {
-                  _scoreCount(value);
+                  setState(() {
+                    _scoreCount(value);
+                  });
                 },
                 inputFormatters: [lettersOnly],
               ),

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hirikana/assests/colors.dart';
 import 'package:hirikana/chart.dart';
 import 'package:hirikana/practice/selection.dart';
+import 'package:hirikana/settings.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,6 +28,12 @@ final GoRouter _router = GoRouter(
           path: 'selection/:mode',
           builder: (BuildContext context, GoRouterState state) {
             return SelectionScreen(mode: state.params["mode"]!);
+          },
+        ),
+        GoRoute(
+          path: 'settings',
+          builder: (BuildContext context, GoRouterState state) {
+            return const ParentWidget();
           },
         ),
       ],
@@ -127,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () => context.go('/settings'),
                       iconSize: 50,
                       icon: const Icon(
                         Icons.settings_outlined,
