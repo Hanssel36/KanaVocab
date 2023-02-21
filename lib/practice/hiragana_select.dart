@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:hirikana/practice/choice.dart';
-import 'package:hirikana/practice/keyboard.dart';
-import 'package:tuple/tuple.dart';
 
+/*
 class HiraganaChart extends StatefulWidget {
   final String mode;
+  final Set<String> filters;
 
-  const HiraganaChart({super.key, required this.mode});
+  const HiraganaChart({
+    super.key,
+    required this.mode,
+    required this.filters,
+  });
 
   @override
   _HiraganaChartState createState() => _HiraganaChartState();
@@ -93,14 +96,34 @@ class _HiraganaChartState extends State<HiraganaChart> {
   final Set<int> _selectedLines = {};
 
   // Called when a line is selected or unselected
-  void _onLineSelected(int lineIndex, bool selected) {
+  void _onLineSelected(int lineIndex, bool selected, Set<String> filters) {
     setState(() {
+      if (filters.contains("All") && !selected) {
+        for (int i = 0; i < _hiraganaData.length; i++) {
+          _selectedLines.add(i);
+        }
+      } else if (filters.contains("Basic") && !selected) {
+        for (int i = 0; i < _hiraganaData.length; i++) {
+          _selectedLines.add(i);
+        }
+      }
+
       if (selected) {
         _selectedLines.add(lineIndex);
+        filters.add("Custom");
       } else {
         _selectedLines.remove(lineIndex);
       }
+
+      print(filters);
     });
+  }
+
+  void _filterCheck(Set<String> filters) {
+    if (_selectedLines.length < 11) {
+      filters.clear();
+      filters.add("Custom");
+    }
   }
 
   final List<Tuple2<String, String>> question = [];
@@ -116,7 +139,9 @@ class _HiraganaChartState extends State<HiraganaChart> {
 
   @override
   Widget build(BuildContext context) {
-    _testFunc(_selectedLines);
+    if (widget.filters.isNotEmpty) {
+      _onLineSelected(-1, false, widget.filters);
+    }
 
     return Column(
       children: [
@@ -128,7 +153,9 @@ class _HiraganaChartState extends State<HiraganaChart> {
                 children: [
                   Checkbox(
                     value: _selectedLines.contains(i),
-                    onChanged: (value) => _onLineSelected(i, value ?? false),
+                    onChanged: (value) => {
+                      _onLineSelected(i, value ?? false, widget.filters),
+                    },
                   ),
                   for (int j = 0; j < _hiraganaData[i].length; j++)
                     HiraganaSelectionItem(
@@ -142,6 +169,8 @@ class _HiraganaChartState extends State<HiraganaChart> {
         // A button to show the selected lines
         ElevatedButton(
           onPressed: () {
+            _testFunc(_selectedLines);
+            question.shuffle();
             if (widget.mode == 'choice') {
               Navigator.of(context).push(
                 MaterialPageRoute(
@@ -166,7 +195,7 @@ class _HiraganaChartState extends State<HiraganaChart> {
     );
   }
 }
-
+*/
 class HiraganaSelectionItem extends StatelessWidget {
   final String value;
 
