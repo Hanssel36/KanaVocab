@@ -205,96 +205,99 @@ class _SelectionScreenState extends State<SelectionScreen> {
             icon: const Icon(Icons.arrow_back),
           ),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 16.0),
-              height: 50.0,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: filters.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: const EdgeInsets.all(8.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        _filterChoice(index);
-                        _onLineSelected(-1, false, selectedFilters, true);
-                      },
-                      child: Chip(
-                        label: Text(filters[index]),
-                        backgroundColor:
-                            selectedFilters.contains(filters[index])
-                                ? Colors.blue
-                                : const Color.fromARGB(255, 224, 224, 224),
-                        labelStyle: TextStyle(
-                          color: selectedFilters.contains(filters[index])
-                              ? Colors.white
-                              : Colors.black,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            // Hiragana Selector
-            Column(
-              children: [
-                // The hiragana chart
-                Table(
-                  children: [
-                    for (int i = 0; i < _hiraganaData.length; i++)
-                      TableRow(
-                        children: [
-                          Checkbox(
-                            value: _selectedLines.contains(i),
-                            onChanged: (value) => {
-                              _onLineSelected(
-                                  i, value ?? false, selectedFilters, false),
-                            },
-                          ),
-                          for (int j = 0; j < _hiraganaData[i].length; j++)
-                            HiraganaSelectionItem(
-                              value: _hiraganaData[i][j],
-                            ),
-                        ],
-                      ),
-                  ],
-                ),
-
-                // A button to show the selected lines
-                ElevatedButton(
-                  onPressed: () {
-                    _testFunc(_selectedLines);
-                    question.shuffle();
-                    if (widget.mode == 'choice') {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ChoiceScreen(lines: _selectedLines),
-                        ),
-                      );
-                    } else {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => KeyboardScreen(
-                            lines: _selectedLines,
-                            question: question,
+        body: ListView(children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 16.0),
+                height: 50.0,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: filters.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          _filterChoice(index);
+                          _onLineSelected(-1, false, selectedFilters, true);
+                        },
+                        child: Chip(
+                          label: Text(filters[index]),
+                          backgroundColor:
+                              selectedFilters.contains(filters[index])
+                                  ? Colors.blue
+                                  : const Color.fromARGB(255, 224, 224, 224),
+                          labelStyle: TextStyle(
+                            color: selectedFilters.contains(filters[index])
+                                ? Colors.white
+                                : Colors.black,
                           ),
                         ),
-                      );
-                    }
-                    print('Selected lines: $_selectedLines');
+                      ),
+                    );
                   },
-                  child: const Text('Start'),
                 ),
-              ],
-            ),
-            Text(" Here ${widget.mode}"),
-          ],
-        ),
+              ),
+              // Hiragana Selector
+              Column(
+                children: [
+                  // The hiragana chart
+                  Column(
+                    children: [
+                      for (int i = 0; i < _hiraganaData.length; i++)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Checkbox(
+                              value: _selectedLines.contains(i),
+                              onChanged: (value) => {
+                                _onLineSelected(
+                                    i, value ?? false, selectedFilters, false),
+                              },
+                            ),
+                            for (int j = 0; j < _hiraganaData[i].length; j++)
+                              HiraganaSelectionItem(
+                                value: _hiraganaData[i][j],
+                              ),
+                          ],
+                        ),
+                    ],
+                  ),
+
+                  // A button to show the selected lines
+                  ElevatedButton(
+                    onPressed: () {
+                      _testFunc(_selectedLines);
+                      question.shuffle();
+                      if (widget.mode == 'choice') {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ChoiceScreen(lines: _selectedLines),
+                          ),
+                        );
+                      } else {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => KeyboardScreen(
+                              lines: _selectedLines,
+                              question: question,
+                            ),
+                          ),
+                        );
+                      }
+                      print('Selected lines: $_selectedLines');
+                    },
+                    child: const Text('Start'),
+                  ),
+                ],
+              ),
+              Text(" Here ${widget.mode}"),
+            ],
+          ),
+        ]),
       ),
     );
   }

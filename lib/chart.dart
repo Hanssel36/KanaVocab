@@ -8,11 +8,14 @@ class ChartsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double textSize = 25;
     return MaterialApp(
       home: DefaultTabController(
         length: 2,
         child: Scaffold(
           appBar: AppBar(
+                   elevation: 0,
+              backgroundColor: backGroundDark,
             bottom: const TabBar(tabs: [
               Tab(text: "Hiragana"),
               Tab(
@@ -56,6 +59,9 @@ Column makeChart(Map<String, List> input, Map<String, String> charMap) {
           children: [
             for (var j in input[i]!)
               Container(
+                margin:
+                    const EdgeInsets.only(bottom: 8.0, left: 15.0, right: 15.0),
+                padding: const EdgeInsets.all(8.0),
                 decoration: const BoxDecoration(
                   color: tiles,
                   borderRadius: BorderRadius.all(
@@ -70,7 +76,7 @@ Column makeChart(Map<String, List> input, Map<String, String> charMap) {
                     Text(
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 50,
+                        fontSize: 35,
                       ),
                       "$j",
                     ),
@@ -101,11 +107,23 @@ ListView makeChartView(
           style: TextStyle(fontSize: 30),
           textAlign: TextAlign.center,
           "VARIATIONS"),
+                      const Divider(
+              thickness: 0.5,
+              indent: 20,
+              endIndent: 20,
+              color: Colors.white30,
+            ),
       makeChart(typeVariations, charMap),
       const Text(
           style: TextStyle(fontSize: 30),
           textAlign: TextAlign.center,
           "COMBINATIONS"),
+                      const Divider(
+              thickness: 0.5,
+              indent: 20,
+              endIndent: 20,
+              color: Colors.white30,
+            ),
       makeChart(typeCombinations, charMap),
 
       //makeChart(charData.hiraganaCharacterMap),
