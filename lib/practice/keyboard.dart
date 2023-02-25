@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hirikana/assests/colors.dart';
+import 'package:hirikana/practice/results.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/services.dart';
 
@@ -21,16 +22,24 @@ class _KeyboardScreenState extends State<KeyboardScreen> {
 
   _scoreCount(String res) {
     if (res != ans) {
-      print("wrong");
+      incorrect++;
     } else {
-      count++;
-      print(count);
+      corrcet++;
     }
 
     if (widget.question.isNotEmpty) {
       holder = widget.question.removeLast();
       hira = holder.item1;
       ans = holder.item2;
+    } else {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => ResultScreen(
+            correct: corrcet,
+            incorrect: incorrect,
+          ),
+        ),
+      );
     }
   }
 
@@ -38,7 +47,8 @@ class _KeyboardScreenState extends State<KeyboardScreen> {
   late Tuple2<String, String> holder = widget.question.removeLast();
   late String hira = holder.item1;
   late String ans = holder.item2;
-  late int count = 0;
+  late int corrcet = 0;
+  late int incorrect = 0;
 
   @override
   Widget build(BuildContext context) {

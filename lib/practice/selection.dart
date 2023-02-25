@@ -27,10 +27,10 @@ class _SelectionScreenState extends State<SelectionScreen> {
     ['な', 'に', 'ぬ', 'ね', 'の'],
     ['は', 'ひ', 'ふ', 'へ', 'ほ'],
     ['ま', 'み', 'む', 'め', 'も'],
-    ['や', ' ', 'ゆ', ' ', 'よ'],
+    ['や', '    ', 'ゆ', '    ', 'よ'],
     ['ら', 'り', 'る', 'れ', 'ろ'],
-    ['わ', ' ', ' ', ' ', 'を'],
-    ['ん', ' ', ' ', ' ', ' '],
+    ['わ', '    ', '    ', '    ', 'を'],
+    ['ん', '    ', '    ', '    ', '    '],
   ];
   final List<List<Tuple2<String, String>>> hiraganaList = [
     [
@@ -101,19 +101,6 @@ class _SelectionScreenState extends State<SelectionScreen> {
   void _onLineSelected(
       int lineIndex, bool selected, Set<String> filters, bool filterSelect) {
     setState(() {
-      /*
-      if (_selectedLines.length == _hiraganaData.length) {
-        filters.clear();
-        filters.add("All");
-        for (int i = 0; i < _hiraganaData.length; i++) {
-          _selectedLines.add(i);
-        }
-      } else if (filters.contains("Basic") ) {
-        for (int i = 0; i < _hiraganaData.length; i++) {
-          _selectedLines.add(i);
-        }
-        }
-        */
       if (filterSelect) {
         if (filters.contains("All")) {
           for (int i = 0; i < _hiraganaData.length; i++) {
