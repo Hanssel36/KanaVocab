@@ -95,7 +95,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
   ];
 
   // The selected lines
-  final Set<int> _selectedLines = {};
+  Set<int> _selectedLines = {};
 
   // Called when a line is selected or unselected
   void _onLineSelected(
@@ -129,7 +129,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
 
   final List<Tuple2<String, String>> question = [];
 
-  void _testFunc(Set set) {
+  void _loadQuestions(Set set) {
     for (var itr in set) {
       int n = hiraganaList[itr].length;
       for (var i = 0; i < n; i++) {
@@ -231,6 +231,25 @@ class _SelectionScreenState extends State<SelectionScreen> {
               Column(
                 children: [
                   // The hiragana chart
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            selectedFilters.clear();
+                            selectedFilters.add("Custom");
+                            _selectedLines = {};
+                          });
+                        },
+                        iconSize: 32,
+                        color: Color.fromARGB(192, 255, 255, 255),
+                        icon: const Icon(
+                          Icons.delete,
+                        ),
+                      ),
+                    ],
+                  ),
                   Column(
                     children: [
                       for (int i = 0; i < _hiraganaData.length; i++)
@@ -254,31 +273,42 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   ),
 
                   // A button to show the selected lines
-                  ElevatedButton(
-                    onPressed: () {
-                      _testFunc(_selectedLines);
-                      question.shuffle();
-                      if (widget.mode == 'choice') {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ChoiceScreen(lines: _selectedLines),
-                          ),
-                        );
-                      } else {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => KeyboardScreen(
-                              lines: _selectedLines,
-                              question: question,
+                  Builder(builder: (context) {
+                    return ElevatedButton(
+                      onPressed: () {
+                        _loadQuestions(_selectedLines);
+                        question.shuffle();
+                        if (question.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Please pick at least one line'),
                             ),
-                          ),
-                        );
-                      }
-                      print('Selected lines: $_selectedLines');
-                    },
-                    child: const Text('Start'),
-                  ),
+                          );
+                        } else {
+                          if (widget.mode == 'choice') {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ChoiceScreen(lines: _selectedLines),
+                              ),
+                            );
+                          } else {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => KeyboardScreen(
+                                  lines: _selectedLines,
+                                  question: question,
+                                ),
+                              ),
+                            );
+                          }
+                        }
+
+                        //print('Selected lines: $_selectedLines');
+                      },
+                      child: const Text('Start'),
+                    );
+                  }),
                 ],
               ),
               Text(" Here ${widget.mode}"),
