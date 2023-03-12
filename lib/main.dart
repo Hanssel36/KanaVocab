@@ -4,6 +4,7 @@ import 'package:hirikana/assests/colors.dart';
 import 'package:hirikana/chart.dart';
 import 'package:hirikana/practice/selection.dart';
 import 'package:hirikana/settings.dart';
+import 'package:hirikana/flashcards/memorygame.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,6 +35,12 @@ final GoRouter _router = GoRouter(
           path: 'settings',
           builder: (BuildContext context, GoRouterState state) {
             return const ParentWidget();
+          },
+        ),
+        GoRoute(
+          path: 'flashcard',
+          builder: (BuildContext context, GoRouterState state) {
+            return const MemoryGame();
           },
         ),
       ],
@@ -95,6 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Container(
+                  margin: EdgeInsetsDirectional.only(bottom: 10),
                   decoration: const BoxDecoration(
                     color: tiles,
                     borderRadius: BorderRadius.all(Radius.circular(20.0)),
@@ -105,6 +113,36 @@ class _HomeScreenState extends State<HomeScreen> {
                     highlightColor: Colors.transparent,
                     onPressed: () => {context.go('/selection/choice')},
                     icon: const Icon(Icons.gamepad),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsetsDirectional.only(bottom: 10),
+                  decoration: const BoxDecoration(
+                      color: tiles,
+                      borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                  child: IconButton(
+                      iconSize: 75,
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onPressed: () => context.go('/selection/keyboard'),
+                      icon: const Icon(Icons.keyboard)),
+                )
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    color: tiles,
+                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                  ),
+                  child: IconButton(
+                    iconSize: 75,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onPressed: () => {context.go('/flashcard')},
+                    icon: const Icon(Icons.style),
                   ),
                 ),
                 Container(
