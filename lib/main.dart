@@ -1,45 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hirikana/assests/colors.dart';
-import 'package:hirikana/chart.dart';
-import 'package:hirikana/practice/selection.dart';
-import 'package:hirikana/settings.dart';
+import 'package:hirikana/my_route.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final gamemode = StateProvider<String>((ref) => 'mode');
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
-
-/// The route configuration.
-final GoRouter _router = GoRouter(
-  routes: <RouteBase>[
-    GoRoute(
-      path: '/',
-      builder: (BuildContext context, GoRouterState state) {
-        return const HomeScreen();
-      },
-      routes: <RouteBase>[
-        GoRoute(
-          path: 'charts',
-          builder: (BuildContext context, GoRouterState state) {
-            return const ChartsScreen();
-          },
-        ),
-        GoRoute(
-          path: 'selection/:mode',
-          builder: (BuildContext context, GoRouterState state) {
-            return SelectionScreen(mode: state.params["mode"]!);
-          },
-        ),
-        GoRoute(
-          path: 'settings',
-          builder: (BuildContext context, GoRouterState state) {
-            return const ParentWidget();
-          },
-        ),
-      ],
-    ),
-  ],
-);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -47,19 +16,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerConfig: _router,
+      routerConfig: router,
     );
   }
 }
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool change = true;
   String option = "";
   @override
@@ -103,7 +72,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     iconSize: 75,
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
-                    onPressed: () => {context.go('/selection/choice')},
+                    onPressed: () {
+                      ref.read(gamemode.notifier).state = "choice";
+                      GoRouter.of(context).pushNamed(selectionScreen);
+                    },
                     icon: const Icon(Icons.gamepad),
                   ),
                 ),
@@ -115,7 +87,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       iconSize: 75,
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
-                      onPressed: () => context.go('/selection/keyboard'),
+                      onPressed: () {
+                        ref.read(gamemode.notifier).state = "keyboard";
+                        GoRouter.of(context).pushNamed(selectionScreen);
+                      },
                       icon: const Icon(Icons.keyboard)),
                 )
               ],
@@ -127,14 +102,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
-                      onPressed: () => context.go('/charts'),
+                      onPressed: () =>
+                          GoRouter.of(context).pushNamed(chartScreen),
                       iconSize: 50,
                       icon: const Icon(
                         Icons.bookmark_outline,
                       ),
                     ),
                     IconButton(
-                      onPressed: () => context.go('/settings'),
+                      onPressed: () =>
+                          GoRouter.of(context).pushNamed(setttingsScreen),
                       iconSize: 50,
                       icon: const Icon(
                         Icons.settings_outlined,

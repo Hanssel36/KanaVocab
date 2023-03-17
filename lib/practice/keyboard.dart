@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hirikana/assests/colors.dart';
+import 'package:hirikana/my_route.dart';
 import 'package:hirikana/practice/results.dart';
+import 'package:hirikana/practice/selection.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/services.dart';
 
-class KeyboardScreen extends StatefulWidget {
-  final Set<int> lines;
-  final List<Tuple2<String, String>> question;
-  const KeyboardScreen(
-      {super.key, required this.lines, required this.question});
+class KeyboardScreen extends ConsumerStatefulWidget {
+  const KeyboardScreen({super.key});
 
   @override
-  State<KeyboardScreen> createState() => _KeyboardScreenState();
+  ConsumerState<KeyboardScreen> createState() => _KeyboardScreenState();
 }
 
-class _KeyboardScreenState extends State<KeyboardScreen> {
+class _KeyboardScreenState extends ConsumerState<KeyboardScreen> {
   var colorChar = Colors.white;
   bool notPaused = true;
+  int correct = 0;
+  int incorrect = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    correct = 0;
+    incorrect = 0;
+  }
 
   _scoreCount(String res, context) async {
     if (res != ans) {
@@ -29,12 +38,12 @@ class _KeyboardScreenState extends State<KeyboardScreen> {
       await Future.delayed(const Duration(seconds: 2));
       incorrect++;
     } else {
-      corrcet++;
+      correct++;
     }
 
-    if (widget.question.isNotEmpty) {
+    if (question2.isNotEmpty) {
       setState(() {
-        holder = widget.question.removeLast();
+        holder = question2.removeLast();
         hira = holder.item1;
         ans = holder.item2;
         colorChar = Colors.white;
@@ -43,10 +52,8 @@ class _KeyboardScreenState extends State<KeyboardScreen> {
     } else {
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => ResultScreen(
-            correct: corrcet,
-            incorrect: incorrect,
-          ),
+          builder: (context) =>
+              ResultScreen(correct: correct, incorrect: incorrect),
         ),
       );
     }
@@ -68,11 +75,10 @@ class _KeyboardScreenState extends State<KeyboardScreen> {
   }
 
   // This should probably be put in some kind of initState function instead of using late
-  late Tuple2<String, String> holder = widget.question.removeLast();
+  late List<Tuple2<String, String>> question2 = ref.read(proquestion).toList();
+  late Tuple2<String, String> holder = question2.removeLast();
   late String hira = holder.item1;
   late String ans = holder.item2;
-  late int corrcet = 0;
-  late int incorrect = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +95,7 @@ class _KeyboardScreenState extends State<KeyboardScreen> {
             leading: IconButton(
               onPressed: () {
                 if (notPaused) {
-                  context.go("/");
+                  GoRouter.of(context).pushNamed(selectionScreen);
                 }
               },
               icon: const Icon(Icons.arrow_back),
@@ -97,7 +103,7 @@ class _KeyboardScreenState extends State<KeyboardScreen> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              print(widget.question);
+              print(ref.read(proquestion));
             },
             child: const Icon(Icons.start),
           ),

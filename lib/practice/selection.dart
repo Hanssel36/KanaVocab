@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hirikana/assests/colors.dart';
 import 'package:hirikana/practice/hiragana_select.dart';
 import 'package:tuple/tuple.dart';
-
+import '../main.dart';
+import '../my_route.dart';
 import 'choice.dart';
-import 'keyboard.dart';
 
-class SelectionScreen extends StatefulWidget {
-  final String mode;
-  const SelectionScreen({super.key, required this.mode});
+final proquestion = StateProvider<List<Tuple2<String, String>>>((ref) => []);
+
+class SelectionScreen extends ConsumerStatefulWidget {
+  const SelectionScreen({super.key});
 
   @override
-  State<SelectionScreen> createState() => _SelectionScreenState();
+  ConsumerState<SelectionScreen> createState() => _SelectionScreenState();
 }
 
-class _SelectionScreenState extends State<SelectionScreen> {
+class _SelectionScreenState extends ConsumerState<SelectionScreen> {
   List<String> filters = ['All', 'Basic', 'Variants', 'Combinations', 'Custom'];
   Set<String> selectedFilters = {};
 
@@ -123,7 +125,6 @@ class _SelectionScreenState extends State<SelectionScreen> {
           filters.add("Custom");
         }
       }
-      print(filters);
     });
   }
 
@@ -134,6 +135,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
       int n = hiraganaList[itr].length;
       for (var i = 0; i < n; i++) {
         question.add(hiraganaList[itr][i]);
+        ref.read(proquestion.notifier).state.add(hiraganaList[itr][i]);
       }
     }
   }
@@ -164,7 +166,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
       }
 
       // Resets to All
-      if (selectedFilters.length == 0) {
+      if (selectedFilters.isEmpty) {
         selectedFilters.add('All');
       }
     });
@@ -173,6 +175,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
   @override
   void initState() {
     super.initState();
+
     selectedFilters.add('All');
     for (int i = 0; i < _hiraganaData.length; i++) {
       _selectedLines.add(i);
@@ -181,6 +184,8 @@ class _SelectionScreenState extends State<SelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mode = ref.watch(gamemode);
+    ref.invalidate(proquestion);
     return MaterialApp(
       home: Scaffold(
         backgroundColor: backGroundDark,
@@ -188,7 +193,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
           backgroundColor: backGroundDark,
           title: const Text("Selection Keyboard"),
           leading: IconButton(
-            onPressed: () => context.go("/"),
+            onPressed: () => GoRouter.of(context).pushNamed(homeScreen),
             icon: const Icon(Icons.arrow_back),
           ),
         ),
@@ -243,7 +248,7 @@ class _SelectionScreenState extends State<SelectionScreen> {
                           });
                         },
                         iconSize: 32,
-                        color: Color.fromARGB(192, 255, 255, 255),
+                        color: const Color.fromARGB(192, 255, 255, 255),
                         icon: const Icon(
                           Icons.delete,
                         ),
@@ -278,14 +283,16 @@ class _SelectionScreenState extends State<SelectionScreen> {
                       onPressed: () {
                         _loadQuestions(_selectedLines);
                         question.shuffle();
-                        if (question.isEmpty) {
+                        ref.read(proquestion.notifier).state.shuffle();
+                        if (question.isEmpty &&
+                            ref.read(proquestion.notifier).state.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Please pick at least one line'),
                             ),
                           );
                         } else {
-                          if (widget.mode == 'choice') {
+                          if (mode == 'choice') {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) =>
@@ -293,25 +300,16 @@ class _SelectionScreenState extends State<SelectionScreen> {
                               ),
                             );
                           } else {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => KeyboardScreen(
-                                  lines: _selectedLines,
-                                  question: question,
-                                ),
-                              ),
-                            );
+                            GoRouter.of(context).pushNamed(keyboardScreen);
                           }
                         }
-
-                        //print('Selected lines: $_selectedLines');
                       },
                       child: const Text('Start'),
                     );
                   }),
                 ],
               ),
-              Text(" Here ${widget.mode}"),
+              Text(" Here $mode"),
             ],
           ),
         ]),
