@@ -288,8 +288,10 @@ class _SelectionScreenState extends State<SelectionScreen> {
                           if (widget.mode == 'choice') {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    ChoiceScreen(lines: _selectedLines),
+                                builder: (context) => ChoiceScreen(
+                                  lines: _selectedLines,
+                                  question: question,
+                                ),
                               ),
                             );
                           } else {
