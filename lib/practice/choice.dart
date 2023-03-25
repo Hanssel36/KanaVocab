@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tuple/tuple.dart';
 import 'package:hirikana/practice/results.dart';
 import 'package:hirikana/assests/colors.dart';
-import 'package:flutter/services.dart';
+import 'package:hirikana/assests/hiragana_char.dart' as charData;
 
 class ChoiceScreen extends StatefulWidget {
   final Set<int> lines;
@@ -19,22 +19,36 @@ class _ChoiceScreenState extends State<ChoiceScreen> {
     return "";
   }
 
+  int questionnumber = 0;
+
   _scoreCount(String res) {
     if (res != holder.item2) {
       incorrect++;
+      questionnumber++;
     } else {
       corrcet++;
+      questionnumber++;
     }
     final List<String> answers = [
-      for (Tuple2<String, String> i in widget.question) i.item2
+      for (String i in charData.hiraganaCharacterMap.keys)
+        charData.hiraganaCharacterMap[i]!
     ];
 
-    if (widget.question.isNotEmpty) {
-      holder = widget.question.removeLast();
+    //print("answers after for$answers");
+    if (widget.question.length > questionnumber) {
+      holder = widget.question[questionnumber];
       hira = holder.item1;
       answers.shuffle();
-      ans = {holder.item2, answers[0], answers[1], answers[2]};
-      print("reset");
+      ans = [holder.item2, answers[0], answers[1], answers[2]];
+      while (ans.length == 3) {
+        answers.shuffle();
+        ans.add(answers[answers.length - 1]);
+      }
+      ans.shuffle();
+      // print("reset");
+      // print("answers are :$answers");
+      // print(widget.question.length);
+      // print(questionnumber);
     } else {
       Navigator.of(context).push(
         MaterialPageRoute(
@@ -48,18 +62,22 @@ class _ChoiceScreenState extends State<ChoiceScreen> {
   }
 
   // This should probably be put in some kind of initState function instead of using late
-  late Tuple2<String, String> holder = widget.question.removeLast();
+  late Tuple2<String, String> holder = widget.question[questionnumber];
   late final List<String> answers = [
-    for (Tuple2<String, String> i in widget.question) i.item2
+    for (String i in charData.hiraganaCharacterMap.keys)
+      if (charData.hiraganaCharacterMap[i] != holder.item2)
+        charData.hiraganaCharacterMap[i]!
   ];
   late String hira = holder.item1;
-  late Set<String> ans = {holder.item2, answers[0], answers[1], answers[2]};
+  late List<String> ans = [holder.item2, answers[0], answers[1], answers[2]];
   late int corrcet = 0;
   late int incorrect = 0;
 
   @override
   Widget build(BuildContext context) {
-    print(ans);
+//    print(ans);
+    answers.shuffle();
+    ans.shuffle();
 
     return MaterialApp(
       home: Scaffold(
@@ -74,7 +92,8 @@ class _ChoiceScreenState extends State<ChoiceScreen> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            print(widget.question);
+            // print(widget.question);
+            // print(ans);
           },
           child: const Icon(Icons.start),
         ),
@@ -87,44 +106,32 @@ class _ChoiceScreenState extends State<ChoiceScreen> {
             ),
           ),
           Center(
-              child: Column(
-            children: [
-              for (String i in ans)
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _scoreCount(i);
-                      });
-                    },
-                    child: Text(i)),
-              //   ElevatedButton(
-              // onPressed: () {
-              //   setState(() {
-              //     _scoreCount(answers[0]);
-              //   });
-              // },
-              //       child: Text(answers[0]))
-            ],
-          )
-              // child: SizedBox(
-              //   width: 200,
-              //   child: TextField(
-              //     maxLength: 3,
-              //     style: const TextStyle(color: Colors.white),
-              //     decoration: const InputDecoration(
-              //       contentPadding:
-              //           EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-              //       border: OutlineInputBorder(),
-              //     ),
-              //     onSubmitted: (value) {
-              //       setState(() {
-              //         _scoreCount(value);
-              //       });
-              //     },
-              //     inputFormatters: [lettersOnly],
-              //   ),
-              // ),
-              ),
+            child: Column(
+              children: [
+                for (int i = 0; i < 2; i++)
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        for (int j = 0; j < 2; j++)
+                          ElevatedButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(tiles),
+                                  padding: MaterialStateProperty.all(
+                                      const EdgeInsets.all(10))),
+                              onPressed: () {
+                                setState(() {
+                                  _scoreCount(ans[2 * i + j]);
+                                });
+                              },
+                              child: Text(ans[2 * i + j])),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ]),
       ),
     );

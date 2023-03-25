@@ -313,7 +313,6 @@ class _SelectionScreenState extends State<SelectionScreen> {
                   }),
                 ],
               ),
-              Text(" Here ${widget.mode}"),
             ],
           ),
         ]),
