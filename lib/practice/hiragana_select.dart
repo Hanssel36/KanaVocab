@@ -4,6 +4,7 @@ class HiraganaSelectionItem extends StatelessWidget {
   final String value;
 
   const HiraganaSelectionItem({
+    super.key,
     required this.value,
   });
 
@@ -21,7 +22,7 @@ class HiraganaSelectionItem extends StatelessWidget {
         ),
         child: Text(
           value,
-          style: TextStyle(color: Colors.white, fontSize: 35),
+          style: const TextStyle(color: Colors.white, fontSize: 35),
         ),
       ),
     );
