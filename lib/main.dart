@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hirikana/assests/colors.dart';
 import 'package:hirikana/chart.dart';
 import 'package:hirikana/practice/selection.dart';
+import 'package:hirikana/screens/SetsScreen.dart';
 import 'package:hirikana/settings.dart';
 import 'package:hirikana/flashcards/memorygame.dart';
 
@@ -41,6 +42,13 @@ final GoRouter _router = GoRouter(
           path: 'flashcard',
           builder: (BuildContext context, GoRouterState state) {
             return const MemoryGame();
+          },
+        ),
+        GoRoute(
+          path: 'sets',
+          name: "sets",
+          builder: (BuildContext context, GoRouterState state) {
+            return const SetsScreen();
           },
         ),
       ],
@@ -153,8 +161,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       iconSize: 75,
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
-                      onPressed: () => context.go('/selection/keyboard'),
-                      icon: const Icon(Icons.keyboard)),
+                      onPressed: () => {context.go('/sets')},
+                      icon: const Icon(Icons.upload)),
                 )
               ],
             ),
