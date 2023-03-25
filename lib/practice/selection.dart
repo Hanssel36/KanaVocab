@@ -295,8 +295,10 @@ class _SelectionScreenState extends ConsumerState<SelectionScreen> {
                           if (mode == 'choice') {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    ChoiceScreen(lines: _selectedLines),
+                                builder: (context) => ChoiceScreen(
+                                  lines: _selectedLines,
+                                  question: question,
+                                ),
                               ),
                             );
                           } else {
@@ -309,7 +311,6 @@ class _SelectionScreenState extends ConsumerState<SelectionScreen> {
                   }),
                 ],
               ),
-              Text(" Here $mode"),
             ],
           ),
         ]),
