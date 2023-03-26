@@ -150,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     iconSize: 75,
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
-                    onPressed: () => {context.go('/flashcard')},
+                    onPressed: () => {context.go('/sets')},
                     icon: const Icon(Icons.style),
                   ),
                 ),

@@ -11,6 +11,8 @@ class MemoryGame extends ConsumerStatefulWidget {
   ConsumerState<MemoryGame> createState() => _MemoryGameState();
 }
 
+final firstController = TextEditingController();
+final secondController = TextEditingController();
 final Map<String, List<Widget>> viewcards = {
   'Set 1': [
     const Flashcard(
@@ -42,6 +44,15 @@ final Map<String, List<Widget>> viewcards = {
   ]
 };
 
+var listflashcards = [
+  const FlashcardView(front: 'a', back: 'b'),
+];
+
+List<List<String>> carddata = [
+  ['Front of the card', 'Back of the card'],
+  ['Hello', 'Bye'],
+  ['1', '2']
+];
 int index = 0;
 
 class _MemoryGameState extends ConsumerState<MemoryGame> {
@@ -52,36 +63,61 @@ class _MemoryGameState extends ConsumerState<MemoryGame> {
       backgroundColor: backGroundDark,
       appBar: AppBar(
         backgroundColor: backGroundDark,
+        actions: [
+          IconButton(
+              onPressed: () async {
+                final String? name = await _openDialog(context, flashkey);
+                if (name == null || name == '') return;
+
+                if (check.contains(name)) return;
+
+                check.add(name);
+                print(name);
+                setState(() {
+                  _addFlashcards(carddata, name);
+                });
+              },
+              icon: const Icon(Icons.add))
+        ],
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      body: ListView(
         children: [
-          viewcards[flashkey] != [] && viewcards.containsKey(flashkey)
-              ? viewcards[flashkey]![index]
-              : const Text("Add cards"),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              IconButton(
-                onPressed: () {
-                  if (!viewcards.containsKey(flashkey)) return;
-                  _goBack(flashkey);
-                },
-                iconSize: 50,
-                icon: const Icon(
-                  Icons.arrow_left,
-                ),
+              viewcards[flashkey] != [] && viewcards.containsKey(flashkey)
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 30),
+                      child: viewcards[flashkey]![index],
+                    )
+                  : const Text("Add cards"),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      if (!viewcards.containsKey(flashkey)) return;
+                      _goBack(flashkey);
+                    },
+                    iconSize: 50,
+                    icon: const Icon(
+                      Icons.arrow_left,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      if (!viewcards.containsKey(flashkey)) return;
+                      _goNext(flashkey);
+                    },
+                    iconSize: 50,
+                    icon: const Icon(
+                      Icons.arrow_right,
+                    ),
+                  ),
+                ],
               ),
-              IconButton(
-                onPressed: () {
-                  if (!viewcards.containsKey(flashkey)) return;
-                  _goNext(flashkey);
-                },
-                iconSize: 50,
-                icon: const Icon(
-                  Icons.arrow_right,
-                ),
-              ),
+              for (int i = 0; i < carddata.length; i++)
+                FlashcardView(front: carddata[i][0], back: carddata[i][1])
             ],
           ),
         ],
@@ -107,5 +143,91 @@ class _MemoryGameState extends ConsumerState<MemoryGame> {
         index = 0;
       }
     });
+  }
+
+  void _addFlashcards(List<List<String>> carddata, String name) {
+    carddata.add([name, "b"]);
+  }
+
+  void _submit(String flashkey) {
+    viewcards[flashkey]!.add(Flashcard(
+        frontText: firstController.text, backText: secondController.text));
+    carddata.add([firstController.text, secondController.text]);
+    Navigator.of(context).pop();
+    firstController.clear();
+    secondController.clear();
+  }
+
+  Future<String?> _openDialog(BuildContext context, String flashkey) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Create Set"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              autofocus: true,
+              controller: firstController,
+              decoration: InputDecoration(hintText: "Enter Japanese word"),
+              onSubmitted: (_) => _submit(flashkey),
+            ),
+            TextField(
+              autofocus: true,
+              controller: secondController,
+              decoration: InputDecoration(hintText: "Enter English word"),
+              onSubmitted: (_) => _submit(flashkey),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () {
+                _submit(flashkey);
+              },
+              child: const Text("Enter"))
+        ],
+      ),
+    );
+  }
+}
+
+class FlashcardView extends StatelessWidget {
+  final String front;
+  final String back;
+  const FlashcardView({
+    super.key,
+    required this.front,
+    required this.back,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 300,
+      child: InkWell(
+        onLongPress: () {},
+        child: Card(
+          color: tiles,
+          child: Padding(
+            padding: const EdgeInsets.all(
+              15.0,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    children: [
+                      Text(front),
+                      Text(back),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
