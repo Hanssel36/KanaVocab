@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hirikana/flashcards/memorygame.dart';
 
 import '../assests/colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final key = StateProvider<String>((ref) => '');
 
 class SetsScreen extends StatefulWidget {
   const SetsScreen({super.key});
@@ -17,6 +21,8 @@ var cardsets = [
   ),
 ];
 
+Set<String?> check = {'Set 1'};
+
 class _SetsScreenState extends State<SetsScreen> {
   @override
   Widget build(BuildContext context) {
@@ -30,6 +36,9 @@ class _SetsScreenState extends State<SetsScreen> {
                 final String? name = await _openDialog(context);
                 if (name == null || name == '') return;
 
+                if (check.contains(name)) return;
+
+                check.add(name);
                 setState(() {
                   _addcards(cardsets, name);
                 });
@@ -49,9 +58,6 @@ class _SetsScreenState extends State<SetsScreen> {
   }
 
   void _addcards(List<Cards> cardset, String name) {
-    int x = 1;
-    x += 1;
-
     cardset.add(Cards(title: name));
   }
 
@@ -77,7 +83,7 @@ class _SetsScreenState extends State<SetsScreen> {
   }
 }
 
-class Cards extends StatelessWidget {
+class Cards extends ConsumerWidget {
   final String title;
   const Cards({
     super.key,
@@ -85,29 +91,42 @@ class Cards extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
       width: 300,
-      child: Card(
-        color: tiles,
-        child: Padding(
-          padding: const EdgeInsets.all(
-            15.0,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(title),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 80.0),
-                    child: Icon(Icons.more_vert),
-                  )
-                ],
-              ),
-            ],
+      child: InkWell(
+        onTap: () {
+          ref.read(key.notifier).state = title;
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const MemoryGame(),
+            ),
+          );
+        },
+        child: Card(
+          color: tiles,
+          child: Padding(
+            padding: const EdgeInsets.all(
+              15.0,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(title),
+                  ],
+                )),
+                Expanded(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: const [
+                    Icon(Icons.more_vert),
+                  ],
+                ))
+              ],
+            ),
           ),
         ),
       ),

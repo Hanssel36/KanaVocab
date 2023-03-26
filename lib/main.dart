@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hirikana/assests/colors.dart';
 import 'package:hirikana/chart.dart';
@@ -8,7 +9,7 @@ import 'package:hirikana/settings.dart';
 import 'package:hirikana/flashcards/memorygame.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 /// The route configuration.
