@@ -20,6 +20,14 @@ class _KeyboardScreenState extends ConsumerState<KeyboardScreen> {
   bool notPaused = true;
   int correct = 0;
   int incorrect = 0;
+  final myController = TextEditingController();
+  final myFocusNode = FocusNode();
+  @override
+  void dispose() {
+    // Clean up the focus node when the widget is disposed.
+    myFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -101,12 +109,6 @@ class _KeyboardScreenState extends ConsumerState<KeyboardScreen> {
               icon: const Icon(Icons.arrow_back),
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              print(ref.read(proquestion));
-            },
-            child: const Icon(Icons.start),
-          ),
           body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 50.0),
@@ -119,6 +121,9 @@ class _KeyboardScreenState extends ConsumerState<KeyboardScreen> {
               child: SizedBox(
                 width: 200,
                 child: TextField(
+                  controller: myController,
+                  focusNode: myFocusNode,
+                  autofocus: true,
                   maxLength: 3,
                   style: const TextStyle(color: Colors.white),
                   decoration: const InputDecoration(
@@ -126,10 +131,12 @@ class _KeyboardScreenState extends ConsumerState<KeyboardScreen> {
                         EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                     border: OutlineInputBorder(),
                   ),
-                  onSubmitted: (value) {
+                  onSubmitted: (_) {
                     if (notPaused) {
                       setState(() {
-                        _scoreCount(value, context);
+                        _scoreCount(myController.text, context);
+                        myController.clear();
+                        FocusScope.of(context).requestFocus(myFocusNode);
                       });
                     }
                   },

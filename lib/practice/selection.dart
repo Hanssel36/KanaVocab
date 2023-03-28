@@ -191,7 +191,7 @@ class _SelectionScreenState extends ConsumerState<SelectionScreen> {
         backgroundColor: backGroundDark,
         appBar: AppBar(
           backgroundColor: backGroundDark,
-          title: const Text("Selection Keyboard"),
+          title: const Text("Selection Screen"),
           leading: IconButton(
             onPressed: () => GoRouter.of(context).pushNamed(homeScreen),
             icon: const Icon(Icons.arrow_back),
