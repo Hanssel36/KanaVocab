@@ -293,14 +293,7 @@ class _SelectionScreenState extends ConsumerState<SelectionScreen> {
                           );
                         } else {
                           if (mode == 'choice') {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ChoiceScreen(
-                                  lines: _selectedLines,
-                                  question: question,
-                                ),
-                              ),
-                            );
+                            GoRouter.of(context).pushNamed(choiceScreen);
                           } else {
                             GoRouter.of(context).pushNamed(keyboardScreen);
                           }

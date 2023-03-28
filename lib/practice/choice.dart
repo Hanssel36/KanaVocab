@@ -4,21 +4,18 @@ import 'package:tuple/tuple.dart';
 import 'package:hirikana/practice/results.dart';
 import 'package:hirikana/assests/colors.dart';
 import 'package:hirikana/assests/hiragana_char.dart' as charData;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ChoiceScreen extends StatefulWidget {
-  final Set<int> lines;
-  final List<Tuple2<String, String>> question;
-  const ChoiceScreen({super.key, required this.lines, required this.question});
+import 'selection.dart';
+
+class ChoiceScreen extends ConsumerStatefulWidget {
+  const ChoiceScreen({super.key});
 
   @override
-  State<ChoiceScreen> createState() => _ChoiceScreenState();
+  ConsumerState<ChoiceScreen> createState() => _ChoiceScreenState();
 }
 
-class _ChoiceScreenState extends State<ChoiceScreen> {
-  String _gameShow(List quest) {
-    return "";
-  }
-
+class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
   int questionnumber = 0;
 
   _scoreCount(String res) {
@@ -35,8 +32,8 @@ class _ChoiceScreenState extends State<ChoiceScreen> {
     ];
 
     //print("answers after for$answers");
-    if (widget.question.length > questionnumber) {
-      holder = widget.question[questionnumber];
+    if (question2.length > questionnumber) {
+      holder = question2[questionnumber];
       hira = holder.item1;
       answers.shuffle();
       ans = [holder.item2, answers[0], answers[1], answers[2]];
@@ -62,7 +59,8 @@ class _ChoiceScreenState extends State<ChoiceScreen> {
   }
 
   // This should probably be put in some kind of initState function instead of using late
-  late Tuple2<String, String> holder = widget.question[questionnumber];
+  late List<Tuple2<String, String>> question2 = ref.read(proquestion).toList();
+  late Tuple2<String, String> holder = question2[questionnumber];
   late final List<String> answers = [
     for (String i in charData.hiraganaCharacterMap.keys)
       if (charData.hiraganaCharacterMap[i] != holder.item2)

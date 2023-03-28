@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hirikana/assests/colors.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hirikana/main.dart';
 import 'package:hirikana/my_route.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ResultScreen extends StatelessWidget {
+class ResultScreen extends ConsumerWidget {
   final int correct;
   final int incorrect;
 
@@ -11,7 +13,9 @@ class ResultScreen extends StatelessWidget {
       {super.key, required this.correct, required this.incorrect});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mode = ref.watch(gamemode);
+
     return MaterialApp(
       home: Scaffold(
         backgroundColor: backGroundDark,
@@ -67,8 +71,14 @@ class ResultScreen extends StatelessWidget {
                       padding: MaterialStateProperty.all(const EdgeInsets.only(
                           left: 30, right: 30, top: 5, bottom: 5)),
                     ),
-                    onPressed: () =>
-                        GoRouter.of(context).pushNamed(keyboardScreen),
+                    onPressed: () {
+                      if (mode == "keyboard") {
+                        GoRouter.of(context).pushNamed(keyboardScreen);
+                      } else {
+                        GoRouter.of(context).pushNamed(choiceScreen);
+                      }
+                      ;
+                    },
                     child: const Text(
                       "Try Again",
                       style: TextStyle(fontSize: 30),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hirikana/practice/choice.dart';
 import 'package:hirikana/practice/keyboard.dart';
 import 'package:hirikana/practice/selection.dart';
 import 'package:hirikana/settings.dart';
@@ -11,6 +12,7 @@ const String homeScreen = 'home';
 const String selectionScreen = 'selection';
 const String setttingsScreen = 'settings';
 const String keyboardScreen = 'keyboard';
+const String choiceScreen = 'choice';
 
 final GoRouter router = GoRouter(
   routes: <RouteBase>[
@@ -47,6 +49,13 @@ final GoRouter router = GoRouter(
           name: keyboardScreen,
           builder: (BuildContext context, GoRouterState state) {
             return const KeyboardScreen();
+          },
+        ),
+        GoRoute(
+          path: 'choice',
+          name: choiceScreen,
+          builder: (BuildContext context, GoRouterState state) {
+            return const ChoiceScreen();
           },
         ),
       ],
