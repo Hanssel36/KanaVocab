@@ -5,6 +5,7 @@ import 'package:hirikana/my_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final gamemode = StateProvider<String>((ref) => 'mode');
+final kanachoice = StateProvider<bool>((ref) => true);
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -29,8 +30,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  bool change = true;
-  String option = "";
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -52,12 +51,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         MaterialStateProperty.all(const EdgeInsets.all(10))),
                 onPressed: () {
                   setState(() {
-                    change = !change;
+                    ref.read(kanachoice.notifier).state =
+                        !ref.read(kanachoice.notifier).state;
                   });
                 },
                 child: Text(
                     style: const TextStyle(fontSize: 30),
-                    change ? "Hiragana き" : "Katakana \u30A2"),
+                    ref.watch(kanachoice) ? "Hiragana き" : "Katakana \u30A2"),
               ),
             ),
             Row(

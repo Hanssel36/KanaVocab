@@ -20,6 +20,7 @@ class ResultScreen extends ConsumerWidget {
       home: Scaffold(
         backgroundColor: backGroundDark,
         appBar: AppBar(
+          elevation: 0,
           backgroundColor: backGroundDark,
         ),
         body: Row(

@@ -17,9 +17,17 @@ class ChoiceScreen extends ConsumerStatefulWidget {
 
 class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
   int questionnumber = 0;
+  var colorChar = Colors.white;
+  bool notPaused = true;
 
-  _scoreCount(String res) {
+  _scoreCount(String res, BuildContext context) async {
     if (res != holder.item2) {
+      setState(() {
+        colorChar = Colors.red;
+        _showSnackBar(context);
+      });
+      notPaused = false;
+      await Future.delayed(const Duration(seconds: 2));
       incorrect++;
       questionnumber++;
     } else {
@@ -33,8 +41,11 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
 
     //print("answers after for$answers");
     if (question2.length > questionnumber) {
-      holder = question2[questionnumber];
-      hira = holder.item1;
+      setState(() {
+        colorChar = Colors.white;
+        holder = question2[questionnumber];
+        hira = holder.item1;
+      });
       answers.shuffle();
       ans = [holder.item2, answers[0], answers[1], answers[2]];
       while (ans.length == 3) {
@@ -46,6 +57,7 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
       // print("answers are :$answers");
       // print(widget.question.length);
       // print(questionnumber);
+      notPaused = true;
     } else {
       Navigator.of(context).push(
         MaterialPageRoute(
@@ -56,6 +68,21 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
         ),
       );
     }
+  }
+
+  void _showSnackBar(context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '$hira -> $ans',
+          style: const TextStyle(color: Colors.white, fontSize: 25),
+        ),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+      ),
+    );
   }
 
   // This should probably be put in some kind of initState function instead of using late
@@ -78,60 +105,58 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
     ans.shuffle();
 
     return MaterialApp(
-      home: Scaffold(
-        backgroundColor: backGroundDark,
-        appBar: AppBar(
+      home: Builder(builder: (context) {
+        return Scaffold(
           backgroundColor: backGroundDark,
-          title: const Text("Quiz"),
-          leading: IconButton(
-            onPressed: () => context.go("/"),
-            icon: const Icon(Icons.arrow_back),
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // print(widget.question);
-            // print(ans);
-          },
-          child: const Icon(Icons.start),
-        ),
-        body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 50.0),
-            child: Text(
-              hira,
-              style: const TextStyle(color: Colors.white, fontSize: 100),
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: backGroundDark,
+            title: const Text("Quiz"),
+            leading: IconButton(
+              onPressed: () => context.go("/"),
+              icon: const Icon(Icons.arrow_back),
             ),
           ),
-          Center(
-            child: Column(
-              children: [
-                for (int i = 0; i < 2; i++)
-                  Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        for (int j = 0; j < 2; j++)
-                          ElevatedButton(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(tiles),
-                                  padding: MaterialStateProperty.all(
-                                      const EdgeInsets.all(10))),
-                              onPressed: () {
-                                setState(() {
-                                  _scoreCount(ans[2 * i + j]);
-                                });
-                              },
-                              child: Text(ans[2 * i + j])),
-                      ],
+          body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 50.0),
+              child: Text(
+                hira,
+                style: TextStyle(color: colorChar, fontSize: 100),
+              ),
+            ),
+            Center(
+              child: Column(
+                children: [
+                  for (int i = 0; i < 2; i++)
+                    Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          for (int j = 0; j < 2; j++)
+                            ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(tiles),
+                                    padding: MaterialStateProperty.all(
+                                        const EdgeInsets.all(10))),
+                                onPressed: () {
+                                  if (notPaused) {
+                                    setState(() {
+                                      _scoreCount(ans[2 * i + j], context);
+                                    });
+                                  }
+                                },
+                                child: Text(ans[2 * i + j])),
+                        ],
+                      ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ]),
-      ),
+          ]),
+        );
+      }),
     );
   }
 }

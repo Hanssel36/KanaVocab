@@ -98,6 +98,7 @@ class _KeyboardScreenState extends ConsumerState<KeyboardScreen> {
         return Scaffold(
           backgroundColor: backGroundDark,
           appBar: AppBar(
+            elevation: 0,
             backgroundColor: backGroundDark,
             title: const Text("Keyboard"),
             leading: IconButton(
