@@ -44,18 +44,16 @@ final Map<String, List<Widget>> viewcards = {
   ]
 };
 
-var listflashcards = [
-  const FlashcardView(front: 'a', back: 'b'),
-];
-
-List<List<String>> carddata = [
-  ['Front of the card', 'Back of the card'],
-  ['Hello', 'Bye'],
-  ['1', '2']
-];
-int index = 0;
+final Map<String, List<List<String>>> carddata = {
+  'Set 1': [
+    ['Front of the card', 'Back of the card'],
+    ['Hello', 'Bye'],
+    ['1', '2']
+  ]
+};
 
 class _MemoryGameState extends ConsumerState<MemoryGame> {
+  int index = 0;
   @override
   Widget build(BuildContext context) {
     final flashkey = ref.watch(key);
@@ -66,16 +64,7 @@ class _MemoryGameState extends ConsumerState<MemoryGame> {
         actions: [
           IconButton(
               onPressed: () async {
-                final String? name = await _openDialog(context, flashkey);
-                if (name == null || name == '') return;
-
-                if (check.contains(name)) return;
-
-                check.add(name);
-                print(name);
-                setState(() {
-                  _addFlashcards(carddata, name);
-                });
+                await _openDialog(context, flashkey);
               },
               icon: const Icon(Icons.add))
         ],
@@ -116,8 +105,16 @@ class _MemoryGameState extends ConsumerState<MemoryGame> {
                   ),
                 ],
               ),
-              for (int i = 0; i < carddata.length; i++)
-                FlashcardView(front: carddata[i][0], back: carddata[i][1])
+              carddata.containsKey(flashkey)
+                  ? Column(
+                      children: [
+                        for (int i = 0; i < carddata[flashkey]!.length; i++)
+                          FlashcardView(
+                              front: carddata[flashkey]![i][0],
+                              back: carddata[flashkey]![i][1])
+                      ],
+                    )
+                  : Text("Add cards")
             ],
           ),
         ],
@@ -145,14 +142,19 @@ class _MemoryGameState extends ConsumerState<MemoryGame> {
     });
   }
 
-  void _addFlashcards(List<List<String>> carddata, String name) {
-    carddata.add([name, "b"]);
-  }
-
   void _submit(String flashkey) {
+    if (!viewcards.containsKey(flashkey)) {
+      viewcards[flashkey] = [];
+    }
+    if (!carddata.containsKey(flashkey)) {
+      carddata[flashkey] = [];
+    }
+    if (firstController.text == '' && secondController.text == '') return;
     viewcards[flashkey]!.add(Flashcard(
         frontText: firstController.text, backText: secondController.text));
-    carddata.add([firstController.text, secondController.text]);
+    setState(() {
+      carddata[flashkey]!.add([firstController.text, secondController.text]);
+    });
     Navigator.of(context).pop();
     firstController.clear();
     secondController.clear();
