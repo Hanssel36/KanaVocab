@@ -1,41 +1,110 @@
 import 'package:flutter/material.dart';
 import 'package:hirikana/flashcards/memorygame.dart';
+import 'package:tuple/tuple.dart';
 
 import '../assests/colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final key = StateProvider<String>((ref) => '');
+import '../flashcards/flashcard.dart';
 
-final cardsets2 = StateProvider<List>((ref) => [
-      Cards(
-        title: 'Set 1',
-      ),
-    ]);
+final key = StateProvider<Tuple2>((ref) => Tuple2('', ''));
+final dropdownValue = StateProvider<String>((ref) => 'Default');
 
-final check2 = StateProvider<Set>((ref) => {'Set 1'});
+final categoriesandsets = StateProvider<Map>((ref) => {
+      'Default': [
+        Cards(
+          title: 'Set 4',
+        ),
+      ],
+      'Option 1': [
+        Cards(
+          title: 'Set 1',
+        ),
+      ],
+      'Option 2': [
+        Cards(
+          title: 'Set 2',
+        ),
+      ]
+    });
 
-class SetsScreen extends ConsumerWidget {
-  const SetsScreen({super.key});
+class SetsScreen extends ConsumerStatefulWidget {
+  SetsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SetsScreen> createState() => _SetsScreenState();
+}
+
+final myController = TextEditingController();
+int selectedIndex = 0;
+
+class _SetsScreenState extends ConsumerState<SetsScreen> {
+  @override
+  Widget build(BuildContext context) {
+    List<String> list = <String>[];
+    for (var key in ref.read(categoriesandsets).keys.toList()) {
+      list.add(key.toString());
+    }
     return Scaffold(
       backgroundColor: backGroundDark,
       appBar: AppBar(
         backgroundColor: backGroundDark,
         actions: [
-          IconButton(
-              onPressed: () async {
-                final String? name = await _openDialog(context);
-                if (name == null || name == '') return;
+          Padding(
+            padding: EdgeInsets.only(right: 150),
+            child: DropdownButton<String>(
+              value: ref.watch(dropdownValue),
+              alignment: AlignmentDirectional.centerEnd,
+              icon: Padding(
+                padding: const EdgeInsets.only(left: 15),
+                child: const Icon(Icons.arrow_downward),
+              ),
+              elevation: 16,
+              style: const TextStyle(color: Colors.blueAccent),
+              underline: Container(
+                height: 2,
+                color: Colors.white24,
+              ),
+              onChanged: (String? value) {
+                // This is called when the user selects an item.
 
-                if (ref.watch(check2.notifier).state.contains(name)) return;
-
-                ref.read(check2.notifier).state.add(name);
-                //ref.read(test.notifier).state++;
-                _addcards(cardsets2, name, ref);
+                ref.read(dropdownValue.notifier).state = value!;
               },
-              icon: const Icon(Icons.add))
+              items: list.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              _showCategoriesOptionsDialog(context, ref);
+            },
+          ),
+          IconButton(
+            onPressed: () async {
+              final String? name = await _openDialog(context);
+              if (name == null || name == '') return;
+              int n =
+                  ref.watch(categoriesandsets)[ref.watch(dropdownValue)].length;
+              bool check = false;
+
+              for (int i = 0; i < n; i++) {
+                if (ref
+                        .watch(categoriesandsets)[ref.watch(dropdownValue)][i]
+                        .title ==
+                    name) {
+                  check = true;
+                }
+              }
+              if (check) return;
+              _addcards(name);
+            },
+            icon: const Icon(Icons.add),
+          ),
         ],
       ),
       body: Row(
@@ -43,8 +112,13 @@ class SetsScreen extends ConsumerWidget {
         children: [
           Column(
             children: [
-              for (int i = 0; i < ref.watch(cardsets2).length; i++)
-                ref.watch(cardsets2)[i],
+              for (int i = 0;
+                  i <
+                      ref
+                          .watch(categoriesandsets)[ref.watch(dropdownValue)]
+                          .length;
+                  i++)
+                ref.watch(categoriesandsets)[ref.watch(dropdownValue)][i],
             ],
           )
         ],
@@ -52,15 +126,18 @@ class SetsScreen extends ConsumerWidget {
     );
   }
 
-  void _addcards(
-      StateProvider<List<dynamic>> cardsets2, String name, WidgetRef ref) {
-    List<dynamic> oldState = ref.read(cardsets2);
+  void _addcards(String name) {
+    List<Cards> oldState =
+        ref.watch(categoriesandsets)[ref.watch(dropdownValue)];
 
     oldState.add(Cards(
       title: name,
     ));
 
-    ref.read(cardsets2.notifier).update((state) => oldState.toList());
+    ref.read(categoriesandsets.notifier).state = {
+      ...ref.watch(categoriesandsets),
+      ref.watch(dropdownValue): oldState.toList(),
+    };
   }
 
   void _submit(BuildContext context) {
@@ -89,11 +166,119 @@ class SetsScreen extends ConsumerWidget {
       ),
     );
   }
+
+  void _showCategoriesOptionsDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Categories Options"),
+          content: Text("Do you want to delete, add or edit?"),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Delete"),
+              onPressed: () {
+                // Perform the delete operation here
+                Navigator.of(context).pop();
+                _showDeleteCategoryDialog(context, ref);
+              },
+            ),
+            TextButton(
+              child: Text("Add"),
+              onPressed: () {
+                // Perform the add operation here
+                Navigator.of(context).pop();
+                _showAddCategoryDialog(context, ref);
+              },
+            ),
+            TextButton(
+              child: Text("Edit"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteCategoryDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add an option'),
+          content: TextFormField(
+            controller: myController,
+            decoration: InputDecoration(
+              hintText: 'Option name',
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: Text('Add'),
+              onPressed: () {
+                setState(() {
+                  ref
+                      .read(categoriesandsets.notifier)
+                      .state
+                      .putIfAbsent(myController.text, () => []);
+                });
+                myController.clear();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showAddCategoryDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add an option'),
+          content: TextFormField(
+            controller: myController,
+            decoration: InputDecoration(
+              hintText: 'Option name',
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: Text('Add'),
+              onPressed: () {
+                setState(() {
+                  ref
+                      .read(categoriesandsets.notifier)
+                      .state
+                      .putIfAbsent(myController.text, () => []);
+                });
+                myController.clear();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
-
-final myController = TextEditingController();
-
-Set<String?> check = {'Set 1'};
 
 class Cards extends ConsumerStatefulWidget {
   final String title;
@@ -106,9 +291,6 @@ class Cards extends ConsumerStatefulWidget {
 class _CardsState extends ConsumerState<Cards> {
   @override
   Widget build(BuildContext context) {
-    ref.listen(cardsets2, (previous, next) {
-      print('counter changed $next');
-    });
     return SizedBox(
       width: 300,
       child: InkWell(
@@ -116,7 +298,8 @@ class _CardsState extends ConsumerState<Cards> {
           _showBottomSheet(context);
         },
         onTap: () {
-          ref.read(key.notifier).state = widget.title;
+          ref.read(key.notifier).state =
+              Tuple2(ref.watch(dropdownValue), widget.title);
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => const MemoryGame(),
@@ -130,27 +313,42 @@ class _CardsState extends ConsumerState<Cards> {
               15.0,
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                    child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(widget.title),
-                  ],
-                )),
-                Expanded(
-                    child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: const [
-                    Icon(Icons.more_vert),
-                  ],
-                ))
+                Text(widget.title),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Future<String?> _openDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Edit Set Name"),
+        content: TextField(
+          autofocus: true,
+          controller: myController,
+          decoration: InputDecoration(hintText: "Enter title"),
+          onSubmitted: (_) => _submit(context),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () {
+                _submit(context);
+              },
+              child: const Text("Enter"))
+        ],
+      ),
+    );
+  }
+
+  void _submit(BuildContext context) {
+    Navigator.of(context).pop(myController.text);
+    myController.clear();
   }
 
   void _showBottomSheet(BuildContext context) {
@@ -163,8 +361,66 @@ class _CardsState extends ConsumerState<Cards> {
               ListTile(
                 leading: Icon(Icons.edit),
                 title: Text('Edit'),
-                onTap: () {
+                onTap: () async {
                   // Perform edit operation
+                  int n = ref
+                      .watch(categoriesandsets)[ref.watch(dropdownValue)]
+                      .length;
+                  bool check = false;
+                  Tuple2 oldKey =
+                      Tuple2(ref.watch(dropdownValue), widget.title);
+
+                  final index = ref
+                      .watch(categoriesandsets)[ref.watch(dropdownValue)]
+                      .indexWhere((card) => card.title == widget.title);
+
+                  List<dynamic> oldState =
+                      ref.watch(categoriesandsets)[ref.watch(dropdownValue)];
+
+                  final String? name = await _openDialog(context);
+                  if (name == null || name == '') return;
+
+                  for (int i = 0; i < n; i++) {
+                    if (ref
+                            .watch(categoriesandsets)[ref.watch(dropdownValue)]
+                                [i]
+                            .title ==
+                        name) {
+                      check = true;
+                    }
+                  }
+                  if (check) return;
+
+                  oldState[index] = Cards(
+                    title: name,
+                  );
+
+                  ref.read(categoriesandsets.notifier).state = {
+                    ...ref.watch(categoriesandsets),
+                    ref.watch(dropdownValue): oldState.toList(),
+                  };
+
+                  // This will keep same cards with new set name
+                  Tuple2 newKey = Tuple2(ref.watch(dropdownValue), name);
+                  List<Flashcard> value = [];
+
+                  if (ref.watch(viewcards2).containsKey(oldKey)) {
+                    value = ref.watch(viewcards2)[oldKey]!;
+                  } else {
+                    ref.read(viewcards2.notifier).state[oldKey] = [];
+                  }
+
+                  Map<Tuple2, List<Flashcard>> newMap = {
+                    ...ref.watch(viewcards2)
+                  }; // Create a copy of the original map
+
+                  newMap.remove(oldKey);
+
+                  newMap[newKey] =
+                      value; // Add the new key-value pair with the same value
+
+                  ref.read(viewcards2.notifier).state = newMap;
+
                   Navigator.pop(context);
                 },
               ),
@@ -178,18 +434,18 @@ class _CardsState extends ConsumerState<Cards> {
                   // Perform delete operation
 
                   final card = ref
-                      .watch(cardsets2)
+                      .watch(categoriesandsets)[ref.watch(dropdownValue)]
                       .firstWhere((card) => card.title == widget.title);
 
-                  List<dynamic> oldState = ref.read(cardsets2);
+                  List<dynamic> oldState =
+                      ref.watch(categoriesandsets)[ref.watch(dropdownValue)];
 
                   oldState.remove(card);
 
-                  ref
-                      .read(cardsets2.notifier)
-                      .update((state) => oldState.toList());
-
-                  ref.read(check2.notifier).state.remove(card.title);
+                  ref.read(categoriesandsets.notifier).state = {
+                    ...ref.watch(categoriesandsets),
+                    ref.watch(dropdownValue): oldState.toList(),
+                  };
 
                   Navigator.pop(context);
                 },

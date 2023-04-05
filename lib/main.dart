@@ -49,7 +49,7 @@ final GoRouter _router = GoRouter(
           path: 'sets',
           name: "sets",
           builder: (BuildContext context, GoRouterState state) {
-            return const SetsScreen();
+            return SetsScreen();
           },
         ),
       ],

@@ -2,7 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hirikana/flashcards/flashcard.dart';
 import 'package:hirikana/screens/SetsScreen.dart';
+import 'package:tuple/tuple.dart';
 import '../assests/colors.dart';
+
+final viewcards2 = StateProvider<Map<Tuple2, List<Flashcard>>>((ref) => {
+      Tuple2('Default', 'Set 1'): [
+        const Flashcard(
+          frontText: 'Front of the card',
+          backText: 'Back of the card',
+        ),
+        const Flashcard(
+          frontText: 'Hello',
+          backText: 'Bye',
+        ),
+        const Flashcard(
+          frontText: '1',
+          backText: '2',
+        )
+      ]
+    });
 
 class MemoryGame extends ConsumerStatefulWidget {
   const MemoryGame({super.key});
@@ -13,50 +31,30 @@ class MemoryGame extends ConsumerStatefulWidget {
 
 final firstController = TextEditingController();
 final secondController = TextEditingController();
-final Map<String, List<Widget>> viewcards = {
-  'Set 1': [
-    const Flashcard(
-      frontText: 'Front of the card',
-      backText: 'Back of the card',
-    ),
-    const Flashcard(
-      frontText: 'Hello',
-      backText: 'Bye',
-    ),
-    const Flashcard(
-      frontText: '1',
-      backText: '2',
-    )
-  ],
-  'Set 2': [
-    const Flashcard(
-      frontText: 'New',
-      backText: 'old',
-    ),
-    const Flashcard(
-      frontText: 'a',
-      backText: 'b',
-    ),
-    const Flashcard(
-      frontText: 'Stop',
-      backText: 'Go',
-    )
-  ]
-};
-
-final Map<String, List<List<String>>> carddata = {
-  'Set 1': [
-    ['Front of the card', 'Back of the card'],
-    ['Hello', 'Bye'],
-    ['1', '2']
-  ]
-};
+// final Map<Tuple2, List<Widget>> viewcards = {
+//   Tuple2('Default','Set 1'): [
+//     const Flashcard(
+//       frontText: 'Front of the card',
+//       backText: 'Back of the card',
+//     ),
+//     const Flashcard(
+//       frontText: 'Hello',
+//       backText: 'Bye',
+//     ),
+//     const Flashcard(
+//       frontText: '1',
+//       backText: '2',
+//     )
+//   ]
+// };
 
 class _MemoryGameState extends ConsumerState<MemoryGame> {
   int index = 0;
+
   @override
   Widget build(BuildContext context) {
     final flashkey = ref.watch(key);
+
     return Scaffold(
       backgroundColor: backGroundDark,
       appBar: AppBar(
@@ -74,10 +72,13 @@ class _MemoryGameState extends ConsumerState<MemoryGame> {
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              viewcards[flashkey] != [] && viewcards.containsKey(flashkey)
+              ref.watch(viewcards2)[flashkey] != null &&
+                      ref.watch(viewcards2)[flashkey] != [] &&
+                      ref.watch(viewcards2)[flashkey]!.isNotEmpty &&
+                      ref.watch(viewcards2).containsKey(flashkey)
                   ? Padding(
                       padding: const EdgeInsets.only(top: 30),
-                      child: viewcards[flashkey]![index],
+                      child: ref.watch(viewcards2)[flashkey]![index],
                     )
                   : const Text("Add cards"),
               Row(
@@ -85,7 +86,7 @@ class _MemoryGameState extends ConsumerState<MemoryGame> {
                 children: [
                   IconButton(
                     onPressed: () {
-                      if (!viewcards.containsKey(flashkey)) return;
+                      if (!ref.watch(viewcards2).containsKey(flashkey)) return;
                       _goBack(flashkey);
                     },
                     iconSize: 50,
@@ -95,7 +96,7 @@ class _MemoryGameState extends ConsumerState<MemoryGame> {
                   ),
                   IconButton(
                     onPressed: () {
-                      if (!viewcards.containsKey(flashkey)) return;
+                      if (!ref.watch(viewcards2).containsKey(flashkey)) return;
                       _goNext(flashkey);
                     },
                     iconSize: 50,
@@ -105,13 +106,17 @@ class _MemoryGameState extends ConsumerState<MemoryGame> {
                   ),
                 ],
               ),
-              carddata.containsKey(flashkey)
+              ref.watch(viewcards2).containsKey(flashkey)
                   ? Column(
                       children: [
-                        for (int i = 0; i < carddata[flashkey]!.length; i++)
+                        for (int i = 0;
+                            i < ref.watch(viewcards2)[flashkey]!.length;
+                            i++)
                           FlashcardView(
-                              front: carddata[flashkey]![i][0],
-                              back: carddata[flashkey]![i][1])
+                              front:
+                                  ref.watch(viewcards2)[flashkey]![i].frontText,
+                              back:
+                                  ref.watch(viewcards2)[flashkey]![i].backText)
                       ],
                     )
                   : Text("Add cards")
@@ -122,19 +127,19 @@ class _MemoryGameState extends ConsumerState<MemoryGame> {
     );
   }
 
-  void _goBack(String flashkey) {
+  void _goBack(Tuple2 flashkey) {
     setState(() {
       if (index - 1 >= 0) {
         index -= 1;
       } else {
-        index = viewcards[flashkey]!.length - 1;
+        index = ref.watch(viewcards2)[flashkey]!.length - 1;
       }
     });
   }
 
-  void _goNext(String flashkey) {
+  void _goNext(Tuple2 flashkey) {
     setState(() {
-      if (index + 1 < viewcards[flashkey]!.length) {
+      if (index + 1 < ref.watch(viewcards2)[flashkey]!.length) {
         index += 1;
       } else {
         index = 0;
@@ -142,25 +147,28 @@ class _MemoryGameState extends ConsumerState<MemoryGame> {
     });
   }
 
-  void _submit(String flashkey) {
-    if (!viewcards.containsKey(flashkey)) {
-      viewcards[flashkey] = [];
+  void _submit(Tuple2 flashkey) {
+    if (!ref.watch(viewcards2).containsKey(flashkey)) {
+      ref.read(viewcards2.notifier).state[flashkey] = [];
     }
-    if (!carddata.containsKey(flashkey)) {
-      carddata[flashkey] = [];
-    }
-    if (firstController.text == '' && secondController.text == '') return;
-    viewcards[flashkey]!.add(Flashcard(
+    if (firstController.text == '' || secondController.text == '') return;
+
+    List<Flashcard>? oldState = ref.read(viewcards2)[flashkey];
+
+    oldState!.add(Flashcard(
         frontText: firstController.text, backText: secondController.text));
-    setState(() {
-      carddata[flashkey]!.add([firstController.text, secondController.text]);
-    });
+
+    ref.read(viewcards2.notifier).state = {
+      ...ref.watch(viewcards2),
+      flashkey: oldState.toList(),
+    };
+
     Navigator.of(context).pop();
     firstController.clear();
     secondController.clear();
   }
 
-  Future<String?> _openDialog(BuildContext context, String flashkey) {
+  Future<String?> _openDialog(BuildContext context, Tuple2 flashkey) {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -194,21 +202,24 @@ class _MemoryGameState extends ConsumerState<MemoryGame> {
   }
 }
 
-class FlashcardView extends StatelessWidget {
+class FlashcardView extends ConsumerWidget {
   final String front;
   final String back;
-  const FlashcardView({
+  FlashcardView({
     super.key,
     required this.front,
     required this.back,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Tuple2 flashkey = ref.watch(key);
     return SizedBox(
       width: 300,
       child: InkWell(
-        onLongPress: () {},
+        onLongPress: () {
+          _showBottomSheet(context, ref, flashkey);
+        },
         child: Card(
           color: tiles,
           child: Padding(
@@ -230,6 +241,83 @@ class FlashcardView extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _showBottomSheet(BuildContext context, WidgetRef ref, Tuple2 flashkey) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.edit),
+                title: Text('Edit'),
+                onTap: () {
+                  // Perform edit operation
+
+                  Navigator.pop(context);
+                },
+              ),
+              Divider(
+                thickness: 1,
+              ),
+              ListTile(
+                leading: Icon(Icons.delete),
+                title: Text('Delete'),
+                onTap: () {
+                  // Perform delete operation
+                  int index = 0;
+                  List<Flashcard>? oldList = ref.watch(viewcards2)[flashkey];
+
+                  for (int i = 0; i < oldList!.length; i++) {
+                    if (this.front == oldList[i].frontText &&
+                        this.back == oldList[i].backText) {
+                      break;
+                    }
+                    index++;
+                  }
+
+                  oldList.removeAt(index);
+
+                  ref.read(viewcards2.notifier).state = {
+                    ...ref.watch(viewcards2),
+                    flashkey: oldList.toList(),
+                  };
+
+                  // final card = ref
+                  //     .watch(cardsets2)
+                  //     .firstWhere((card) => card.title == widget.title);
+
+                  // List<dynamic> oldState = ref.read(cardsets2);
+
+                  // oldState.remove(card);
+
+                  // ref
+                  //     .read(cardsets2.notifier)
+                  //     .update((state) => oldState.toList());
+
+                  // ref.read(check2.notifier).state.remove(card.title);
+
+                  Navigator.pop(context);
+                },
+              ),
+              Divider(
+                thickness: 1,
+              ),
+              ListTile(
+                leading: Icon(Icons.move_to_inbox),
+                title: Text('Move'),
+                onTap: () {
+                  // Perform move operation
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
