@@ -204,34 +204,60 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
   }
 
   void _showDeleteCategoryDialog(BuildContext context, WidgetRef ref) {
+    List<String> list = <String>[];
+    for (var key in ref.watch(categoriesandsets).keys.toList()) {
+      list.add(key.toString());
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add an option'),
-          content: TextFormField(
-            controller: myController,
-            decoration: InputDecoration(
-              hintText: 'Option name',
-            ),
+          title: Text("Select which Category to Delete"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              for (int i = 0; i < list.length; i++)
+                ListTile(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showCertainDialog(context, ref, list, i);
+                  },
+                  title: Text(list[i]),
+                )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showCertainDialog(
+      BuildContext context, WidgetRef ref, List<String> list, int i) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirm Deletion"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text("Are you sure you want to delete ${list[i]}?"),
+            ],
           ),
           actions: <Widget>[
             ElevatedButton(
-              child: Text('Cancel'),
+              child: Text('Yes'),
               onPressed: () {
+                setState(() {
+                  ref.read(categoriesandsets.notifier).state.remove(list[i]);
+                });
                 Navigator.of(context).pop();
               },
             ),
             ElevatedButton(
-              child: Text('Add'),
+              child: Text('No'),
               onPressed: () {
-                setState(() {
-                  ref
-                      .read(categoriesandsets.notifier)
-                      .state
-                      .putIfAbsent(myController.text, () => []);
-                });
-                myController.clear();
                 Navigator.of(context).pop();
               },
             ),
