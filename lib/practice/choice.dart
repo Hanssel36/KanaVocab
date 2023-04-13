@@ -71,10 +71,11 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
   }
 
   void _showSnackBar(context) {
+    String finalanswer = holder.item2;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          '$hira -> $ans',
+          '$hira -> $finalanswer',
           style: const TextStyle(color: Colors.white, fontSize: 25),
         ),
         duration: const Duration(seconds: 2),
