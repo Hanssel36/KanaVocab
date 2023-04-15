@@ -52,7 +52,6 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
         answers.shuffle();
         ans.add(answers[answers.length - 1]);
       }
-      ans.shuffle();
       // print("reset");
       // print("answers are :$answers");
       // print(widget.question.length);
@@ -88,7 +87,7 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
 
   // This should probably be put in some kind of initState function instead of using late
   late List<Tuple2<String, String>> question2 = ref.read(proquestion).toList();
-  late Tuple2<String, String> holder = question2[questionnumber];
+  late Tuple2<String, String> holder = question2[0];
   late final List<String> answers = [
     for (String i in charData.hiraganaCharacterMap.keys)
       if (charData.hiraganaCharacterMap[i] != holder.item2)
@@ -101,9 +100,8 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
 
   @override
   Widget build(BuildContext context) {
-//    print(ans);
     answers.shuffle();
-    ans.shuffle();
+    //ans.shuffle();
 
     return MaterialApp(
       home: Builder(builder: (context) {
