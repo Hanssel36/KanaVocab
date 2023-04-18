@@ -7,6 +7,7 @@ import 'package:hirikana/assests/hiragana_char.dart' as charData;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
 import 'selection.dart';
+import 'package:hirikana/my_route.dart';
 
 class ChoiceScreen extends ConsumerStatefulWidget {
   const ChoiceScreen({super.key});
@@ -130,7 +131,11 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
             backgroundColor: backGroundDark,
             title: const Text("Quiz"),
             leading: IconButton(
-              onPressed: () => context.go("/"),
+              onPressed: () {
+                if (notPaused) {
+                  GoRouter.of(context).pushNamed(selectionScreen);
+                }
+              },
               icon: const Icon(Icons.arrow_back),
             ),
           ),
