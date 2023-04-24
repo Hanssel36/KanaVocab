@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hirikana/practice/choice.dart';
-import 'package:hirikana/practice/keyboard.dart';
-import 'package:hirikana/practice/selection.dart';
-import 'package:hirikana/settings.dart';
-import 'chart.dart';
+import 'package:hirikana/screens/choice.dart';
+import 'package:hirikana/screens/keyboard.dart';
+import 'package:hirikana/screens/selection.dart';
+import 'package:hirikana/screens/settings.dart';
+import 'package:hirikana/screens/chart.dart';
 import 'main.dart';
 import 'package:hirikana/screens/SetsScreen.dart';
-import 'package:hirikana/flashcards/memorygame.dart';
+import 'package:hirikana/screens/memorygame.dart';
 
 const String chartScreen = 'chart';
 const String homeScreen = 'home';
@@ -65,7 +65,7 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: 'flashcard',
           builder: (BuildContext context, GoRouterState state) {
-            return const MemoryGame();
+            return const MemoryGameScreen();
           },
         ),
         GoRoute(

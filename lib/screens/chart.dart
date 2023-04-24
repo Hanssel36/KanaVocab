@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hirikana/assests/colors.dart';
-import 'package:hirikana/assests/hiragana_char.dart' as charData;
+import 'package:hirikana/utils/colors.dart';
+import 'package:hirikana/utils/hiragana_char.dart' as charData;
 import 'package:hirikana/my_route.dart';
 
 class ChartsScreen extends StatelessWidget {

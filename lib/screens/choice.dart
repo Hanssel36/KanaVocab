@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tuple/tuple.dart';
-import 'package:hirikana/practice/results.dart';
-import 'package:hirikana/assests/colors.dart';
-import 'package:hirikana/assests/hiragana_char.dart' as charData;
+import 'package:hirikana/screens/results.dart';
+import 'package:hirikana/utils/colors.dart';
+import 'package:hirikana/utils/hiragana_char.dart' as charData;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
 import 'selection.dart';

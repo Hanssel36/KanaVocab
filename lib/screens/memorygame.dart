@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hirikana/flashcards/flashcard.dart';
+import 'package:hirikana/widgets/flashcard.dart';
 import 'package:hirikana/screens/SetsScreen.dart';
 import 'package:tuple/tuple.dart';
-import '../assests/colors.dart';
+import '../utils/colors.dart';
 
 final viewcards2 = StateProvider<Map<Tuple2, List<Flashcard>>>((ref) => {
       Tuple2('Default', 'Set 1'): [
@@ -22,11 +22,11 @@ final viewcards2 = StateProvider<Map<Tuple2, List<Flashcard>>>((ref) => {
       ]
     });
 
-class MemoryGame extends ConsumerStatefulWidget {
-  const MemoryGame({super.key});
+class MemoryGameScreen extends ConsumerStatefulWidget {
+  const MemoryGameScreen({super.key});
 
   @override
-  ConsumerState<MemoryGame> createState() => _MemoryGameState();
+  ConsumerState<MemoryGameScreen> createState() => _MemoryGameScreenState();
 }
 
 final firstController = TextEditingController();
@@ -48,7 +48,7 @@ final secondController = TextEditingController();
 //   ]
 // };
 
-class _MemoryGameState extends ConsumerState<MemoryGame> {
+class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
   int index = 0;
 
   @override

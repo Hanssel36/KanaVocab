@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hirikana/flashcards/memorygame.dart';
+import 'package:hirikana/screens/memorygame.dart';
 import 'package:tuple/tuple.dart';
 
-import '../assests/colors.dart';
+import '../utils/colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../flashcards/flashcard.dart';
+import '../widgets/flashcard.dart';
 
 final key = StateProvider<Tuple2>((ref) => Tuple2('', ''));
 final dropdownValue = StateProvider<String>((ref) => 'Default');
@@ -326,9 +326,11 @@ class _CardsState extends ConsumerState<Cards> {
         onTap: () {
           ref.read(key.notifier).state =
               Tuple2(ref.watch(dropdownValue), widget.title);
+
+          // Change navigation
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const MemoryGame(),
+              builder: (context) => const MemoryGameScreen(),
             ),
           );
         },

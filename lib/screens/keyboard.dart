@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hirikana/assests/colors.dart';
+import 'package:hirikana/utils/colors.dart';
 import 'package:hirikana/my_route.dart';
-import 'package:hirikana/practice/results.dart';
-import 'package:hirikana/practice/selection.dart';
+import 'package:hirikana/screens/results.dart';
+import 'package:hirikana/screens/selection.dart';
 import 'package:tuple/tuple.dart';
 import 'package:flutter/services.dart';
 

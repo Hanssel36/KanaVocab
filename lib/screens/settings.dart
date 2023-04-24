@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hirikana/assests/colors.dart';
-import '../my_route.dart';
+import 'package:hirikana/utils/colors.dart';
+import '../../my_route.dart';
 
 // class SettingsScreen extends StatelessWidget {
 //   const SettingsScreen({super.key});
