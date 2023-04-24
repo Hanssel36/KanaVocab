@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hirikana/assests/colors.dart';
 import 'package:hirikana/assests/hiragana_char.dart' as charData;
+import 'package:hirikana/my_route.dart';
 
 class ChartsScreen extends StatelessWidget {
   const ChartsScreen({super.key});
@@ -23,7 +24,7 @@ class ChartsScreen extends StatelessWidget {
             ]),
             title: const Text("Charts"),
             leading: IconButton(
-              onPressed: () => context.go("/"),
+              onPressed: () => GoRouter.of(context).pushNamed(homeScreen),
               icon: const Icon(Icons.arrow_back),
             ),
           ),

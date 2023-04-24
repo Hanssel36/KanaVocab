@@ -1,72 +1,141 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hirikana/assests/colors.dart';
+import '../my_route.dart';
 
-class ParentWidget extends StatefulWidget {
-  const ParentWidget({Key? key}) : super(key: key);
+// class SettingsScreen extends StatelessWidget {
+//   const SettingsScreen({super.key});
 
-  @override
-  _ParentWidgetState createState() => _ParentWidgetState();
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(),
+//     );
+//   }
+// }
 
-class _ParentWidgetState extends State<ParentWidget> {
-  bool _isChecked = false;
+const List<String> fonts = <String>['Font 1', 'Font2', 'Font3'];
 
-  void _handleCheckboxChanged(bool isChecked) {
-    setState(() {
-      _isChecked = isChecked;
-    });
-  }
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Parent Widget'),
-      ),
-      body: ChildWidget(
-        isChecked: _isChecked,
-        onCheckboxChanged: _handleCheckboxChanged,
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: backGroundDark,
+        appBar: AppBar(
+          backgroundColor: backGroundDark,
+          title: const Text("Settings"),
+          leading: IconButton(
+            onPressed: () => GoRouter.of(context).pushNamed(homeScreen),
+            icon: const Icon(Icons.arrow_back),
+          ),
+        ),
+        body: Column(children: const [
+          MuteBox(),
+          FontSelector(),
+        ]),
       ),
     );
   }
 }
 
-class ChildWidget extends StatefulWidget {
-  final bool isChecked;
-  final void Function(bool) onCheckboxChanged;
-
-  const ChildWidget({
-    Key? key,
-    required this.isChecked,
-    required this.onCheckboxChanged,
-  }) : super(key: key);
+class MuteBox extends StatefulWidget {
+  const MuteBox({super.key});
 
   @override
-  _ChildWidgetState createState() => _ChildWidgetState();
+  State<MuteBox> createState() => _MuteBox();
 }
 
-class _ChildWidgetState extends State<ChildWidget> {
-  bool _isChecked = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _isChecked = widget.isChecked;
-  }
+class _MuteBox extends State<MuteBox> {
+  bool isChecked = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Checkbox(
-          value: _isChecked,
-          onChanged: (newValue) {
+    Color getColor(Set<MaterialState> states) {
+      const Set<MaterialState> interactiveStates = <MaterialState>{
+        MaterialState.pressed,
+        MaterialState.hovered,
+        MaterialState.focused,
+      };
+      if (states.any(interactiveStates.contains)) {
+        return Colors.blue;
+      }
+      return Colors.black;
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+                style: const TextStyle(color: Colors.white),
+                isChecked ? "Muted" : "Not Muted"),
+          ],
+        ),
+        Checkbox(
+          checkColor: Colors.white,
+          fillColor: MaterialStateProperty.resolveWith(getColor),
+          value: isChecked,
+          onChanged: (bool? value) {
             setState(() {
-              _isChecked = newValue!;
-              widget.onCheckboxChanged(_isChecked);
+              isChecked = value!;
             });
           },
+        )
+      ],
+    );
+  }
+}
+
+class FontSelector extends StatefulWidget {
+  const FontSelector({super.key});
+
+  @override
+  State<FontSelector> createState() => _FontSelectorState();
+}
+
+class _FontSelectorState extends State<FontSelector> {
+  String dropdownValue = fonts.first;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text(style: const TextStyle(color: Colors.white), "Font"),
+          ],
         ),
-      ),
+        DropdownButton<String>(
+          value: dropdownValue,
+          icon: const Icon(
+            Icons.arrow_downward,
+          ),
+          elevation: 16,
+          style: const TextStyle(color: Colors.deepPurple),
+          underline: Container(
+            height: 2,
+            color: Colors.deepPurpleAccent,
+          ),
+          onChanged: (String? value) {
+            setState(() {
+              dropdownValue = value!;
+            });
+          },
+          items: fonts.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 }

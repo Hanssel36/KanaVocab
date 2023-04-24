@@ -2,17 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hirikana/assests/colors.dart';
-import 'package:hirikana/chart.dart';
-import 'package:hirikana/practice/selection.dart';
 import 'package:hirikana/screens/SetsScreen.dart';
-import 'package:hirikana/settings.dart';
 import 'package:hirikana/flashcards/memorygame.dart';
+import 'package:hirikana/my_route.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final gamemode = StateProvider<String>((ref) => 'mode');
+final kanachoice = StateProvider<bool>((ref) => true);
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
 
+
+
+
 /// The route configuration.
+/// This will be taken out. Just need to add flashcard and sets route to myroute
+
 final GoRouter _router = GoRouter(
   routes: <RouteBase>[
     GoRoute(
@@ -57,27 +64,31 @@ final GoRouter _router = GoRouter(
   ],
 );
 
+
+
+
+
+
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerConfig: _router,
+      routerConfig: router,
     );
   }
 }
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  bool change = true;
-  String option = "";
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -99,12 +110,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         MaterialStateProperty.all(const EdgeInsets.all(10))),
                 onPressed: () {
                   setState(() {
-                    change = !change;
+                    ref.read(kanachoice.notifier).state =
+                        !ref.read(kanachoice.notifier).state;
                   });
                 },
                 child: Text(
                     style: const TextStyle(fontSize: 30),
-                    change ? "Hiragana き" : "Katakana \u30A2"),
+                    ref.watch(kanachoice) ? "Hiragana き" : "Katakana \u30A2"),
               ),
             ),
             Row(
@@ -120,7 +132,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     iconSize: 75,
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
-                    onPressed: () => {context.go('/selection/choice')},
+                    onPressed: () {
+                      ref.read(gamemode.notifier).state = "choice";
+                      GoRouter.of(context).pushNamed(selectionScreen);
+                    },
                     icon: const Icon(Icons.gamepad),
                   ),
                 ),
@@ -133,7 +148,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       iconSize: 75,
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
-                      onPressed: () => context.go('/selection/keyboard'),
+                      onPressed: () {
+                        ref.read(gamemode.notifier).state = "keyboard";
+                        GoRouter.of(context).pushNamed(selectionScreen);
+                      },
                       icon: const Icon(Icons.keyboard)),
                 )
               ],
@@ -174,14 +192,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
-                      onPressed: () => context.go('/charts'),
+                      onPressed: () =>
+                          GoRouter.of(context).pushNamed(chartScreen),
                       iconSize: 50,
                       icon: const Icon(
                         Icons.bookmark_outline,
                       ),
                     ),
                     IconButton(
-                      onPressed: () => context.go('/settings'),
+                      onPressed: () =>
+                          GoRouter.of(context).pushNamed(setttingsScreen),
                       iconSize: 50,
                       icon: const Icon(
                         Icons.settings_outlined,
