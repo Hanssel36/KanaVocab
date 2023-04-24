@@ -5,8 +5,9 @@ import 'package:hirikana/practice/results.dart';
 import 'package:hirikana/assests/colors.dart';
 import 'package:hirikana/assests/hiragana_char.dart' as charData;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'dart:math';
 import 'selection.dart';
+import 'package:hirikana/my_route.dart';
 
 class ChoiceScreen extends ConsumerStatefulWidget {
   const ChoiceScreen({super.key});
@@ -19,6 +20,7 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
   int questionnumber = 0;
   var colorChar = Colors.white;
   bool notPaused = true;
+  List<int> rnglist = [0, 1, 2, 3];
 
   _scoreCount(String res, BuildContext context) async {
     if (res != holder.item2) {
@@ -41,6 +43,7 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
 
     //print("answers after for$answers");
     if (question2.length > questionnumber) {
+      // rnglist.shuffle();
       setState(() {
         colorChar = Colors.white;
         holder = question2[questionnumber];
@@ -48,9 +51,11 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
       });
       answers.shuffle();
       ans = [holder.item2, answers[0], answers[1], answers[2]];
+      ans.shuffle();
       while (ans.length == 3) {
         answers.shuffle();
         ans.add(answers[answers.length - 1]);
+        ans.shuffle();
       }
       // print("reset");
       // print("answers are :$answers");
@@ -94,14 +99,28 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
         charData.hiraganaCharacterMap[i]!
   ];
   late String hira = holder.item1;
-  late List<String> ans = [holder.item2, answers[0], answers[1], answers[2]];
+  late List<String> tempans = [
+    holder.item2,
+    answers[Random().nextInt(answers.length - 1)],
+    answers[Random().nextInt(answers.length - 1)],
+    answers[Random().nextInt(answers.length - 1)]
+  ];
+  late List<int> randlist = shuffleList([0, 1, 2, 3]);
+  late List<String> ans = [
+    tempans[randlist[0]],
+    tempans[randlist[1]],
+    tempans[randlist[2]],
+    tempans[randlist[3]]
+  ];
+
   late int corrcet = 0;
   late int incorrect = 0;
 
   @override
   Widget build(BuildContext context) {
-    answers.shuffle();
+    //answers.shuffle();
     //ans.shuffle();
+    List<int> rnglist = [0, 1, 2, 3];
 
     return MaterialApp(
       home: Builder(builder: (context) {
@@ -112,7 +131,11 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
             backgroundColor: backGroundDark,
             title: const Text("Quiz"),
             leading: IconButton(
-              onPressed: () => context.go("/"),
+              onPressed: () {
+                if (notPaused) {
+                  GoRouter.of(context).pushNamed(selectionScreen);
+                }
+              },
               icon: const Icon(Icons.arrow_back),
             ),
           ),
@@ -142,11 +165,12 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
                                 onPressed: () {
                                   if (notPaused) {
                                     setState(() {
-                                      _scoreCount(ans[2 * i + j], context);
+                                      _scoreCount(
+                                          ans[rnglist[2 * i + j]], context);
                                     });
                                   }
                                 },
-                                child: Text(ans[2 * i + j])),
+                                child: Text(ans[rnglist[2 * i + j]])),
                         ],
                       ),
                     ),
@@ -158,4 +182,9 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
       }),
     );
   }
+}
+
+List<int> shuffleList(List<int> input) {
+  input.shuffle();
+  return input;
 }
