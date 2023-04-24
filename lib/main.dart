@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hirikana/assests/colors.dart';
-import 'package:hirikana/screens/SetsScreen.dart';
-import 'package:hirikana/flashcards/memorygame.dart';
+
 import 'package:hirikana/my_route.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final gamemode = StateProvider<String>((ref) => 'mode');
 final kanachoice = StateProvider<bool>((ref) => true);
@@ -13,62 +11,6 @@ final kanachoice = StateProvider<bool>((ref) => true);
 void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
-
-
-
-
-/// The route configuration.
-/// This will be taken out. Just need to add flashcard and sets route to myroute
-
-final GoRouter _router = GoRouter(
-  routes: <RouteBase>[
-    GoRoute(
-      path: '/',
-      builder: (BuildContext context, GoRouterState state) {
-        return const HomeScreen();
-      },
-      routes: <RouteBase>[
-        GoRoute(
-          path: 'charts',
-          builder: (BuildContext context, GoRouterState state) {
-            return const ChartsScreen();
-          },
-        ),
-        GoRoute(
-          path: 'selection/:mode',
-          builder: (BuildContext context, GoRouterState state) {
-            return SelectionScreen(mode: state.params["mode"]!);
-          },
-        ),
-        GoRoute(
-          path: 'settings',
-          builder: (BuildContext context, GoRouterState state) {
-            return const ParentWidget();
-          },
-        ),
-        GoRoute(
-          path: 'flashcard',
-          builder: (BuildContext context, GoRouterState state) {
-            return const MemoryGame();
-          },
-        ),
-        GoRoute(
-          path: 'sets',
-          name: "sets",
-          builder: (BuildContext context, GoRouterState state) {
-            return SetsScreen();
-          },
-        ),
-      ],
-    ),
-  ],
-);
-
-
-
-
-
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

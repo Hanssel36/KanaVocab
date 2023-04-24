@@ -6,6 +6,8 @@ import 'package:hirikana/practice/selection.dart';
 import 'package:hirikana/settings.dart';
 import 'chart.dart';
 import 'main.dart';
+import 'package:hirikana/screens/SetsScreen.dart';
+import 'package:hirikana/flashcards/memorygame.dart';
 
 const String chartScreen = 'chart';
 const String homeScreen = 'home';
@@ -13,6 +15,8 @@ const String selectionScreen = 'selection';
 const String setttingsScreen = 'settings';
 const String keyboardScreen = 'keyboard';
 const String choiceScreen = 'choice';
+const String setScreen = 'sets';
+const String flashcardScreen = 'flashcard';
 
 final GoRouter router = GoRouter(
   routes: <RouteBase>[
@@ -56,6 +60,19 @@ final GoRouter router = GoRouter(
           name: choiceScreen,
           builder: (BuildContext context, GoRouterState state) {
             return const ChoiceScreen();
+          },
+        ),
+        GoRoute(
+          path: 'flashcard',
+          builder: (BuildContext context, GoRouterState state) {
+            return const MemoryGame();
+          },
+        ),
+        GoRoute(
+          path: 'sets',
+          name: setScreen,
+          builder: (BuildContext context, GoRouterState state) {
+            return SetsScreen();
           },
         ),
       ],
