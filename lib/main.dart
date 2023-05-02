@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hirikana/models/cards.dart';
 import 'package:hirikana/utils/colors.dart';
-
+import 'package:hive/hive.dart';
 import 'package:hirikana/my_route.dart';
+import 'package:hive_flutter/adapters.dart';
 
 final gamemode = StateProvider<String>((ref) => 'mode');
 final kanachoice = StateProvider<bool>((ref) => true);
 
-void main() {
+void main() async {
+  Hive.registerAdapter(CardsAdapter());
+  await Hive.initFlutter();
+
+  // open box
+
+  var box = await Hive.openBox('myBox');
   runApp(const ProviderScope(child: MyApp()));
 }
 

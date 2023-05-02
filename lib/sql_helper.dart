@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart' as sql;
+import 'models/cards.dart';
 
 class SQLHelper {
   static Future<void> createTables(sql.Database database) async {
@@ -25,7 +26,7 @@ class SQLHelper {
   static Future<int> createItem(String categoryName, List setsName) async {
     final db = await SQLHelper.db();
 
-    final data = {'categoryName': categoryName, 'description': setsName};
+    final data = {'categoryName': categoryName, 'setsName': setsName};
     final id = await db.insert('categories', data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
     return id;
@@ -34,5 +35,30 @@ class SQLHelper {
   static Future<List<Map<String, dynamic>>> getItems() async {
     final db = await SQLHelper.db();
     return db.query('categories', orderBy: "id");
+  }
+
+  // Update an item by id
+  static Future<int> updateItem(
+      int id, String title, String? descrption) async {
+    final db = await SQLHelper.db();
+
+    final data = {
+      'title': title,
+      'description': descrption,
+      'createdAt': DateTime.now().toString()
+    };
+    final result =
+        await db.update('items', data, where: "id = ?", whereArgs: [id]);
+    return result;
+  }
+
+  // Delete
+  static Future<void> deleteItem(int id) async {
+    final db = await SQLHelper.db();
+    try {
+      await db.delete("items", where: "id = ?", whereArgs: [id]);
+    } catch (err) {
+      debugPrint("Something went wrong when deleting an item: $err");
+    }
   }
 }

@@ -1,32 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:hirikana/screens/memorygame.dart';
+import 'package:hive/hive.dart';
 import 'package:tuple/tuple.dart';
-
+import 'package:hirikana/widgets/cards_widget.dart';
+import '../data/database.dart';
+import '../models/cards.dart';
 import '../utils/colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../widgets/flashcard.dart';
-
 final key = StateProvider<Tuple2>((ref) => Tuple2('', ''));
 final dropdownValue = StateProvider<String>((ref) => 'Default');
+final categoriesandsets = StateProvider<Map>((ref) => db.categoriesandsetsDB);
 
-final categoriesandsets = StateProvider<Map>((ref) => {
-      'Default': [
-        Cards(
-          title: 'Set 4',
-        ),
-      ],
-      'Option 1': [
-        Cards(
-          title: 'Set 1',
-        ),
-      ],
-      'Option 2': [
-        Cards(
-          title: 'Set 2',
-        ),
-      ]
-    });
+// final categoriesandsets = StateProvider<Map>((ref) => {
+//       'Default': [
+//         Cards(
+//           title: 'Set 4',
+//         ),
+//       ],
+//       'Option 1': [
+//         Cards(
+//           title: 'Set 1',
+//         ),
+//       ],
+//       'Option 2': [
+//         Cards(
+//           title: 'Set 2',
+//         ),
+//       ]
+//     });
 
 class SetsScreen extends ConsumerStatefulWidget {
   SetsScreen({super.key});
@@ -37,8 +38,21 @@ class SetsScreen extends ConsumerStatefulWidget {
 
 final myController = TextEditingController();
 int selectedIndex = 0;
+final _myBox = Hive.box('myBox');
+CategoryandSets db = CategoryandSets();
 
 class _SetsScreenState extends ConsumerState<SetsScreen> {
+  @override
+  void initState() {
+    if (_myBox.get('CATEGORY') == null) {
+      db.createInitData();
+    } else {
+      db.loadData();
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     List<String> list = <String>[];
@@ -118,7 +132,9 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
                           .watch(categoriesandsets)[ref.watch(dropdownValue)]
                           .length;
                   i++)
-                ref.watch(categoriesandsets)[ref.watch(dropdownValue)][i],
+                CardsWidget(
+                    card: ref.watch(categoriesandsets)[ref.watch(dropdownValue)]
+                        [i]),
             ],
           )
         ],
@@ -128,16 +144,16 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
 
   void _addcards(String name) {
     List<Cards> oldState =
-        ref.watch(categoriesandsets)[ref.watch(dropdownValue)];
+        ref.watch(categoriesandsets)[ref.watch(dropdownValue)].cast<Cards>();
 
-    oldState.add(Cards(
-      title: name,
-    ));
+    oldState.add(Cards(title: name));
 
     ref.read(categoriesandsets.notifier).state = {
       ...ref.watch(categoriesandsets),
       ref.watch(dropdownValue): oldState.toList(),
     };
+    db.updateDataBase2(ref.read(categoriesandsets));
+    db.printDatabaseContent();
   }
 
   void _submit(BuildContext context) {
@@ -252,6 +268,7 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
                 setState(() {
                   ref.read(categoriesandsets.notifier).state.remove(list[i]);
                 });
+                db.updateDataBase();
                 Navigator.of(context).pop();
               },
             ),
@@ -295,202 +312,12 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
                       .state
                       .putIfAbsent(myController.text, () => []);
                 });
+                db.updateDataBase();
                 myController.clear();
                 Navigator.of(context).pop();
               },
             ),
           ],
-        );
-      },
-    );
-  }
-}
-
-class Cards extends ConsumerStatefulWidget {
-  final String title;
-  const Cards({super.key, required this.title});
-
-  @override
-  ConsumerState<Cards> createState() => _CardsState();
-}
-
-class _CardsState extends ConsumerState<Cards> {
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 300,
-      child: InkWell(
-        onLongPress: () {
-          _showBottomSheet(context);
-        },
-        onTap: () {
-          ref.read(key.notifier).state =
-              Tuple2(ref.watch(dropdownValue), widget.title);
-
-          // Change navigation
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const MemoryGameScreen(),
-            ),
-          );
-        },
-        child: Card(
-          color: tiles,
-          child: Padding(
-            padding: const EdgeInsets.all(
-              15.0,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(widget.title),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<String?> _openDialog(BuildContext context) {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Edit Set Name"),
-        content: TextField(
-          autofocus: true,
-          controller: myController,
-          decoration: InputDecoration(hintText: "Enter title"),
-          onSubmitted: (_) => _submit(context),
-        ),
-        actions: [
-          TextButton(
-              onPressed: () {
-                _submit(context);
-              },
-              child: const Text("Enter"))
-        ],
-      ),
-    );
-  }
-
-  void _submit(BuildContext context) {
-    Navigator.of(context).pop(myController.text);
-    myController.clear();
-  }
-
-  void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          child: Wrap(
-            children: <Widget>[
-              ListTile(
-                leading: Icon(Icons.edit),
-                title: Text('Edit'),
-                onTap: () async {
-                  // Perform edit operation
-                  int n = ref
-                      .watch(categoriesandsets)[ref.watch(dropdownValue)]
-                      .length;
-                  bool check = false;
-                  Tuple2 oldKey =
-                      Tuple2(ref.watch(dropdownValue), widget.title);
-
-                  final index = ref
-                      .watch(categoriesandsets)[ref.watch(dropdownValue)]
-                      .indexWhere((card) => card.title == widget.title);
-
-                  List<dynamic> oldState =
-                      ref.watch(categoriesandsets)[ref.watch(dropdownValue)];
-
-                  final String? name = await _openDialog(context);
-                  if (name == null || name == '') return;
-
-                  for (int i = 0; i < n; i++) {
-                    if (ref
-                            .watch(categoriesandsets)[ref.watch(dropdownValue)]
-                                [i]
-                            .title ==
-                        name) {
-                      check = true;
-                    }
-                  }
-                  if (check) return;
-
-                  oldState[index] = Cards(
-                    title: name,
-                  );
-
-                  ref.read(categoriesandsets.notifier).state = {
-                    ...ref.watch(categoriesandsets),
-                    ref.watch(dropdownValue): oldState.toList(),
-                  };
-
-                  // This will keep same cards with new set name
-                  Tuple2 newKey = Tuple2(ref.watch(dropdownValue), name);
-                  List<Flashcard> value = [];
-
-                  if (ref.watch(viewcards2).containsKey(oldKey)) {
-                    value = ref.watch(viewcards2)[oldKey]!;
-                  } else {
-                    ref.read(viewcards2.notifier).state[oldKey] = [];
-                  }
-
-                  Map<Tuple2, List<Flashcard>> newMap = {
-                    ...ref.watch(viewcards2)
-                  }; // Create a copy of the original map
-
-                  newMap.remove(oldKey);
-
-                  newMap[newKey] =
-                      value; // Add the new key-value pair with the same value
-
-                  ref.read(viewcards2.notifier).state = newMap;
-
-                  Navigator.pop(context);
-                },
-              ),
-              Divider(
-                thickness: 1,
-              ),
-              ListTile(
-                leading: Icon(Icons.delete),
-                title: Text('Delete'),
-                onTap: () {
-                  // Perform delete operation
-
-                  final card = ref
-                      .watch(categoriesandsets)[ref.watch(dropdownValue)]
-                      .firstWhere((card) => card.title == widget.title);
-
-                  List<dynamic> oldState =
-                      ref.watch(categoriesandsets)[ref.watch(dropdownValue)];
-
-                  oldState.remove(card);
-
-                  ref.read(categoriesandsets.notifier).state = {
-                    ...ref.watch(categoriesandsets),
-                    ref.watch(dropdownValue): oldState.toList(),
-                  };
-
-                  Navigator.pop(context);
-                },
-              ),
-              Divider(
-                thickness: 1,
-              ),
-              ListTile(
-                leading: Icon(Icons.move_to_inbox),
-                title: Text('Move'),
-                onTap: () {
-                  // Perform move operation
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
         );
       },
     );
