@@ -1,26 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hirikana/widgets/flashcard.dart';
+import 'package:hirikana/data/flashcardDB.dart';
+import 'package:hirikana/models/flashcardmodel.dart';
 import 'package:hirikana/screens/SetsScreen.dart';
 import 'package:tuple/tuple.dart';
 import '../utils/colors.dart';
+import 'package:hirikana/widgets/flashcard.dart';
+import 'package:hive/hive.dart';
 
-final viewcards2 = StateProvider<Map<Tuple2, List<Flashcard>>>((ref) => {
-      Tuple2('Default', 'Set 1'): [
-        const Flashcard(
-          frontText: 'Front of the card',
-          backText: 'Back of the card',
-        ),
-        const Flashcard(
-          frontText: 'Hello',
-          backText: 'Bye',
-        ),
-        const Flashcard(
-          frontText: '1',
-          backText: '2',
-        )
-      ]
-    });
+final viewcards2 = StateProvider<Map<Tuple2, List<FlashcardModel>>>(
+    (ref) => flashcardDB.viewcardsDB);
 
 class MemoryGameScreen extends ConsumerStatefulWidget {
   const MemoryGameScreen({super.key});
@@ -31,6 +20,9 @@ class MemoryGameScreen extends ConsumerStatefulWidget {
 
 final firstController = TextEditingController();
 final secondController = TextEditingController();
+FlashCardsDB flashcardDB = FlashCardsDB();
+final _myBox = Hive.box('myBox');
+
 // final Map<Tuple2, List<Widget>> viewcards = {
 //   Tuple2('Default','Set 1'): [
 //     const Flashcard(
@@ -50,6 +42,14 @@ final secondController = TextEditingController();
 
 class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
   int index = 0;
+  @override
+  void initState() {
+    if (_myBox.get('FLASHCARD') != null) {
+      flashcardDB.loadData();
+    }
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +78,12 @@ class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
                       ref.watch(viewcards2).containsKey(flashkey)
                   ? Padding(
                       padding: const EdgeInsets.only(top: 30),
-                      child: ref.watch(viewcards2)[flashkey]![index],
+                      child: Flashcard(
+                        frontText:
+                            ref.watch(viewcards2)[flashkey]![index].frontText,
+                        backText:
+                            ref.watch(viewcards2)[flashkey]![index].backText,
+                      ),
                     )
                   : const Text("Add cards"),
               Row(
@@ -153,15 +158,18 @@ class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
     }
     if (firstController.text == '' || secondController.text == '') return;
 
-    List<Flashcard>? oldState = ref.read(viewcards2)[flashkey];
+    List<FlashcardModel>? oldState = ref.read(viewcards2)[flashkey];
 
-    oldState!.add(Flashcard(
+    oldState!.add(FlashcardModel(
         frontText: firstController.text, backText: secondController.text));
 
     ref.read(viewcards2.notifier).state = {
       ...ref.watch(viewcards2),
       flashkey: oldState.toList(),
     };
+
+    flashcardDB.updateDataBase2(ref.read(viewcards2));
+    flashcardDB.printDatabaseContent();
 
     Navigator.of(context).pop();
     firstController.clear();
@@ -269,7 +277,8 @@ class FlashcardView extends ConsumerWidget {
                 onTap: () {
                   // Perform delete operation
                   int index = 0;
-                  List<Flashcard>? oldList = ref.watch(viewcards2)[flashkey];
+                  List<FlashcardModel>? oldList =
+                      ref.watch(viewcards2)[flashkey];
 
                   for (int i = 0; i < oldList!.length; i++) {
                     if (this.front == oldList[i].frontText &&
@@ -299,6 +308,8 @@ class FlashcardView extends ConsumerWidget {
                   //     .update((state) => oldState.toList());
 
                   // ref.read(check2.notifier).state.remove(card.title);
+
+                  flashcardDB.updateDataBase2(ref.read(viewcards2));
 
                   Navigator.pop(context);
                 },

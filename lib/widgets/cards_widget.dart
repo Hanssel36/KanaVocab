@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hirikana/models/cards.dart';
+import 'package:hirikana/models/flashcardmodel.dart';
 import 'package:tuple/tuple.dart';
 import 'package:hirikana/screens/SetsScreen.dart';
 import 'package:hirikana/screens/memorygame.dart';
@@ -131,7 +132,7 @@ class _CardsState extends ConsumerState<CardsWidget> {
 
                   // This will keep same cards with new set name
                   Tuple2 newKey = Tuple2(ref.watch(dropdownValue), name);
-                  List<Flashcard> value = [];
+                  List<FlashcardModel> value = [];
 
                   if (ref.watch(viewcards2).containsKey(oldKey)) {
                     value = ref.watch(viewcards2)[oldKey]!;
@@ -139,7 +140,7 @@ class _CardsState extends ConsumerState<CardsWidget> {
                     ref.read(viewcards2.notifier).state[oldKey] = [];
                   }
 
-                  Map<Tuple2, List<Flashcard>> newMap = {
+                  Map<Tuple2, List<FlashcardModel>> newMap = {
                     ...ref.watch(viewcards2)
                   }; // Create a copy of the original map
 
@@ -151,6 +152,7 @@ class _CardsState extends ConsumerState<CardsWidget> {
                   ref.read(viewcards2.notifier).state = newMap;
 
                   db.updateDataBase2(ref.read(categoriesandsets));
+                  flashcardDB.updateDataBase2(ref.read(viewcards2));
                   db.printDatabaseContent();
 
                   Navigator.pop(context);

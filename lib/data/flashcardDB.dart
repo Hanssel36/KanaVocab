@@ -1,0 +1,51 @@
+import 'package:hirikana/models/flashcardmodel.dart';
+import 'package:hive/hive.dart';
+import 'package:tuple/tuple.dart';
+import '../widgets/flashcard.dart';
+import 'package:hirikana/models/tuple2_adapter.dart';
+
+class FlashCardsDB {
+  Map<Tuple2, List<FlashcardModel>> viewcardsDB = {};
+
+  final _myBox = Hive.box('myBox');
+
+  // Load the data from the database
+  void loadData() {
+    Map<dynamic, dynamic> dataFromHive = _myBox.get("FLASHCARD");
+
+    if (dataFromHive != null) {
+      // Convert Tuple2Adapter keys back to Tuple2 and cast the types
+      dataFromHive.forEach((key, value) {
+        viewcardsDB[(key as Tuple2Adapter).toTuple()] =
+            value.cast<FlashcardModel>();
+      });
+    }
+  }
+
+  // Update the database
+  void updateDataBase() {
+    // Convert Tuple2 keys to Tuple2Adapter
+    Map<Tuple2Adapter, List<FlashcardModel>> dataToSave = {};
+    viewcardsDB.forEach((key, value) {
+      dataToSave[Tuple2Adapter.fromTuple(key)] = value;
+    });
+
+    _myBox.put("FLASHCARD", dataToSave);
+  }
+
+  // Update the database with the provided data
+  void updateDataBase2(Map<Tuple2, List<FlashcardModel>> updatedviewcards) {
+    viewcardsDB = updatedviewcards;
+    updateDataBase(); // Reuse the updateDataBase method to save the data
+  }
+
+  void printDatabaseContent() {
+    // Assuming you have a reference to the box named _myBox
+    print("---- Hive Database Content ----");
+    for (var key in _myBox.keys) {
+      var value = _myBox.get(key);
+      print("Key: $key, Value: $value");
+    }
+    print("---- End of Database Content ----");
+  }
+}

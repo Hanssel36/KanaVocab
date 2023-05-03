@@ -1,4 +1,3 @@
-import 'package:hirikana/screens/SetsScreen.dart';
 import 'package:hive/hive.dart';
 import 'package:hirikana/models/cards.dart';
 
