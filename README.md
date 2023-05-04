@@ -1,6 +1,6 @@
-# HiriKana
+# KanaVocab
 
-HiriKana is a Flutter based project that is used to learn Hiragana and Katakana, as well as have the ability to create your own flash cards to memorize words.
+KanaVocab is a Flutter based project that is used to learn Hiragana and Katakana, as well as have the ability to create your own flash cards to memorize words.
 
 ## Features
 
