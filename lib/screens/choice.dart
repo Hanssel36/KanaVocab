@@ -156,21 +156,30 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           for (int j = 0; j < 2; j++)
-                            ElevatedButton(
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(tiles),
-                                    padding: MaterialStateProperty.all(
-                                        const EdgeInsets.all(10))),
-                                onPressed: () {
-                                  if (notPaused) {
-                                    setState(() {
-                                      _scoreCount(
-                                          ans[rnglist[2 * i + j]], context);
-                                    });
-                                  }
-                                },
-                                child: Text(ans[rnglist[2 * i + j]])),
+                            Container(
+                              height: 100,
+                              width: 200,
+                              padding: EdgeInsets.all(10),
+                              child: ElevatedButton(
+                                  style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              tiles),
+                                      padding: MaterialStateProperty.all(
+                                          const EdgeInsets.all(10))),
+                                  onPressed: () {
+                                    if (notPaused) {
+                                      setState(() {
+                                        _scoreCount(
+                                            ans[rnglist[2 * i + j]], context);
+                                      });
+                                    }
+                                  },
+                                  child: Text(
+                                    ans[rnglist[2 * i + j]],
+                                    style: TextStyle(fontSize: 40),
+                                  )),
+                            ),
                         ],
                       ),
                     ),
