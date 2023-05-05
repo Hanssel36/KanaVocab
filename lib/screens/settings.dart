@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hirikana/utils/colors.dart';
 import '../../my_route.dart';
-
+import 'package:hirikana/services/hive_backup.dart';
 // class SettingsScreen extends StatelessWidget {
 //   const SettingsScreen({super.key});
 
@@ -32,9 +32,35 @@ class SettingsScreen extends StatelessWidget {
             icon: const Icon(Icons.arrow_back),
           ),
         ),
-        body: Column(children: const [
+        body: Column(children: [
           MuteBox(),
+          Divider(
+            thickness: 0.5,
+            indent: 20,
+            endIndent: 20,
+            color: Colors.white30,
+          ),
           FontSelector(),
+          Divider(
+            thickness: 0.5,
+            indent: 20,
+            endIndent: 20,
+            color: Colors.white30,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                "Back Up",
+                style: TextStyle(color: Colors.white),
+              ),
+              ElevatedButton(
+                  onPressed: () async {
+                    await restoreHiveBox('myBox');
+                  },
+                  child: Text("Restore"))
+            ],
+          )
         ]),
       ),
     );
