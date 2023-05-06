@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hirikana/models/cards.dart';
-import 'package:hirikana/models/flashcardmodel.dart';
+import 'package:kanavocab/models/cards.dart';
+import 'package:kanavocab/models/flashcardmodel.dart';
 import 'package:tuple/tuple.dart';
-import 'package:hirikana/screens/SetsScreen.dart';
-import 'package:hirikana/screens/memorygame.dart';
+import 'package:kanavocab/screens/SetsScreen.dart';
+import 'package:kanavocab/screens/memorygame.dart';
 import '../utils/colors.dart';
-import '../widgets/flashcard.dart';
 
 class CardsWidget extends ConsumerStatefulWidget {
   final Cards card;

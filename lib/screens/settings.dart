@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hirikana/screens/SetsScreen.dart';
-import 'package:hirikana/utils/colors.dart';
+import 'package:kanavocab/screens/SetsScreen.dart';
+import 'package:kanavocab/utils/colors.dart';
 import '../../my_route.dart';
-import 'package:hirikana/services/hive_backup.dart';
+import 'package:kanavocab/services/hive_backup.dart';
 // class SettingsScreen extends StatelessWidget {
 //   const SettingsScreen({super.key});
 

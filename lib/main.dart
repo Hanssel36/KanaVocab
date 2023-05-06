@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hirikana/models/cards.dart';
-import 'package:hirikana/utils/colors.dart';
-import 'package:hirikana/my_route.dart';
+import 'package:kanavocab/models/cards.dart';
+import 'package:kanavocab/utils/colors.dart';
+import 'package:kanavocab/my_route.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:hirikana/models/flashcardmodel.dart';
-import 'package:hirikana/models/tuple2_adapter.dart';
+import 'package:kanavocab/models/flashcardmodel.dart';
+import 'package:kanavocab/models/tuple2_adapter.dart';
 
 final gamemode = StateProvider<String>((ref) => 'mode');
 final kanachoice = StateProvider<bool>((ref) => true);

@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'package:hirikana/models/flashcardmodel.dart';
+import 'package:kanavocab/models/flashcardmodel.dart';
 import 'package:hive/hive.dart';
 import 'package:tuple/tuple.dart';
-import '../widgets/flashcard.dart';
-import 'package:hirikana/models/tuple2_adapter.dart';
+import 'package:kanavocab/models/tuple2_adapter.dart';
 
 class FlashCardsDB {
   Map<Tuple2, List<FlashcardModel>> viewcardsDB = {};

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tuple/tuple.dart';
-import 'package:hirikana/screens/results.dart';
-import 'package:hirikana/utils/colors.dart';
-import 'package:hirikana/utils/hiragana_char.dart' as charData;
+import 'package:kanavocab/screens/results.dart';
+import 'package:kanavocab/utils/colors.dart';
+import 'package:kanavocab/utils/hiragana_char.dart' as charData;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
 import 'selection.dart';
-import 'package:hirikana/my_route.dart';
+import 'package:kanavocab/my_route.dart';
 
 class ChoiceScreen extends ConsumerStatefulWidget {
   const ChoiceScreen({super.key});

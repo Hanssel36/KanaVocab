@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:tuple/tuple.dart';
-import 'package:hirikana/widgets/cards_widget.dart';
+import 'package:kanavocab/widgets/cards_widget.dart';
 import '../data/database.dart';
 import '../models/cards.dart';
 import '../utils/colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hirikana/services/hive_backup.dart';
+import 'package:kanavocab/services/hive_backup.dart';
 
 final key = StateProvider<Tuple2>((ref) => Tuple2('', ''));
 final dropdownValue = StateProvider<String>((ref) => 'Default');

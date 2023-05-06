@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hirikana/utils/colors.dart';
+import 'package:kanavocab/utils/colors.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hirikana/main.dart';
-import 'package:hirikana/my_route.dart';
+import 'package:kanavocab/main.dart';
+import 'package:kanavocab/my_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ResultScreen extends ConsumerWidget {

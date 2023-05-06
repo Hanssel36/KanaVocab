@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hirikana/data/flashcardDB.dart';
-import 'package:hirikana/models/flashcardmodel.dart';
-import 'package:hirikana/screens/SetsScreen.dart';
+import 'package:kanavocab/data/flashcardDB.dart';
+import 'package:kanavocab/models/flashcardmodel.dart';
+import 'package:kanavocab/screens/SetsScreen.dart';
 import 'package:tuple/tuple.dart';
 import '../utils/colors.dart';
-import 'package:hirikana/widgets/flashcard.dart';
+import 'package:kanavocab/widgets/flashcard.dart';
 import 'package:hive/hive.dart';
 
 final viewcards2 = StateProvider<Map<Tuple2, List<FlashcardModel>>>(

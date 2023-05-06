@@ -1,4 +1,4 @@
-package com.example.hirikana
+package com.example.kanavocab
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine

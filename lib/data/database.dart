@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:hirikana/models/cards.dart';
+import 'package:kanavocab/models/cards.dart';
 
 class CategoryandSets {
   Map categoriesandsetsDB = {};
