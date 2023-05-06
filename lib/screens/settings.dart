@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hirikana/screens/SetsScreen.dart';
 import 'package:hirikana/utils/colors.dart';
 import '../../my_route.dart';
-
+import 'package:hirikana/services/hive_backup.dart';
 // class SettingsScreen extends StatelessWidget {
 //   const SettingsScreen({super.key});
 
@@ -16,11 +18,11 @@ import '../../my_route.dart';
 
 const List<String> fonts = <String>['Font 1', 'Font2', 'Font3'];
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: backGroundDark,
@@ -32,9 +34,37 @@ class SettingsScreen extends StatelessWidget {
             icon: const Icon(Icons.arrow_back),
           ),
         ),
-        body: Column(children: const [
+        body: Column(children: [
           MuteBox(),
+          Divider(
+            thickness: 0.5,
+            indent: 20,
+            endIndent: 20,
+            color: Colors.white30,
+          ),
           FontSelector(),
+          Divider(
+            thickness: 0.5,
+            indent: 20,
+            endIndent: 20,
+            color: Colors.white30,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Text(
+                "Back Up",
+                style: TextStyle(color: Colors.white),
+              ),
+              ElevatedButton(
+                  onPressed: () async {
+                    await restoreHiveBox('myBox');
+                    ref.read(categoriesandsets.notifier).state =
+                        db.categoriesandsetsDB;
+                  },
+                  child: Text("Restore"))
+            ],
+          )
         ]),
       ),
     );

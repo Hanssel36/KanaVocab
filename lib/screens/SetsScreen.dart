@@ -6,28 +6,12 @@ import '../data/database.dart';
 import '../models/cards.dart';
 import '../utils/colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hirikana/services/hive_backup.dart';
 
 final key = StateProvider<Tuple2>((ref) => Tuple2('', ''));
 final dropdownValue = StateProvider<String>((ref) => 'Default');
 final categoriesandsets = StateProvider<Map>((ref) => db.categoriesandsetsDB);
-
-// final categoriesandsets = StateProvider<Map>((ref) => {
-//       'Default': [
-//         Cards(
-//           title: 'Set 4',
-//         ),
-//       ],
-//       'Option 1': [
-//         Cards(
-//           title: 'Set 1',
-//         ),
-//       ],
-//       'Option 2': [
-//         Cards(
-//           title: 'Set 2',
-//         ),
-//       ]
-//     });
+final restoreTrigger = StateProvider<bool>((ref) => false);
 
 class SetsScreen extends ConsumerStatefulWidget {
   SetsScreen({super.key});
@@ -40,6 +24,8 @@ final myController = TextEditingController();
 int selectedIndex = 0;
 final _myBox = Hive.box('myBox');
 CategoryandSets db = CategoryandSets();
+
+enum MenuOptions { category, newSet, backUp }
 
 class _SetsScreenState extends ConsumerState<SetsScreen> {
   @override
@@ -59,6 +45,7 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
     for (var key in ref.read(categoriesandsets).keys.toList()) {
       list.add(key.toString());
     }
+
     return Scaffold(
       backgroundColor: backGroundDark,
       appBar: AppBar(
@@ -92,32 +79,56 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
               }).toList(),
             ),
           ),
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-              _showCategoriesOptionsDialog(context, ref);
-            },
-          ),
-          IconButton(
-            onPressed: () async {
-              final String? name = await _openDialog(context);
-              if (name == null || name == '') return;
-              int n =
-                  ref.watch(categoriesandsets)[ref.watch(dropdownValue)].length;
-              bool check = false;
+          PopupMenuButton<MenuOptions>(
+            itemBuilder: (BuildContext context) =>
+                <PopupMenuEntry<MenuOptions>>[
+              const PopupMenuItem<MenuOptions>(
+                value: MenuOptions.category,
+                child: Text('Category'),
+              ),
+              const PopupMenuItem<MenuOptions>(
+                value: MenuOptions.newSet,
+                child: Text('New Set'),
+              ),
+              const PopupMenuItem<MenuOptions>(
+                value: MenuOptions.backUp,
+                child: Text('Back Up'),
+              ),
+            ],
+            icon: Icon(Icons.more_vert),
+            onSelected: (MenuOptions result) async {
+              switch (result) {
+                case MenuOptions.category:
+                  // Handle 'Category' action
+                  _showCategoriesOptionsDialog(context, ref);
+                  break;
+                case MenuOptions.newSet:
+                  // Handle 'New Set' action
+                  final String? name = await _openDialog(context);
+                  if (name == null || name == '') return;
+                  int n = ref
+                      .watch(categoriesandsets)[ref.watch(dropdownValue)]
+                      .length;
+                  bool check = false;
 
-              for (int i = 0; i < n; i++) {
-                if (ref
-                        .watch(categoriesandsets)[ref.watch(dropdownValue)][i]
-                        .title ==
-                    name) {
-                  check = true;
-                }
+                  for (int i = 0; i < n; i++) {
+                    if (ref
+                            .watch(categoriesandsets)[ref.watch(dropdownValue)]
+                                [i]
+                            .title ==
+                        name) {
+                      check = true;
+                    }
+                  }
+                  if (check) return;
+                  _addcards(name);
+                  break;
+                case MenuOptions.backUp:
+                  // Handle 'Back Up' action
+                  await backupHiveBox('myBox');
+                  break;
               }
-              if (check) return;
-              _addcards(name);
             },
-            icon: const Icon(Icons.add),
           ),
         ],
       ),

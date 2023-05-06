@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:hirikana/models/flashcardmodel.dart';
 import 'package:hive/hive.dart';
 import 'package:tuple/tuple.dart';
@@ -9,14 +10,15 @@ class FlashCardsDB {
 
   final _myBox = Hive.box('myBox');
 
-  // Load the data from the database
   void loadData() {
     Map<dynamic, dynamic> dataFromHive = _myBox.get("FLASHCARD");
 
     if (dataFromHive != null) {
       // Convert Tuple2Adapter keys back to Tuple2 and cast the types
       dataFromHive.forEach((key, value) {
-        viewcardsDB[(key as Tuple2Adapter).toTuple()] =
+        String jsonString = json.encode(key);
+        Map<String, dynamic> jsonMap = json.decode(jsonString);
+        viewcardsDB[Tuple2Adapter.fromJson(jsonMap).toTuple()] =
             value.cast<FlashcardModel>();
       });
     }
