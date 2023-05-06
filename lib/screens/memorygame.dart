@@ -23,23 +23,6 @@ final secondController = TextEditingController();
 FlashCardsDB flashcardDB = FlashCardsDB();
 final _myBox = Hive.box('myBox');
 
-// final Map<Tuple2, List<Widget>> viewcards = {
-//   Tuple2('Default','Set 1'): [
-//     const Flashcard(
-//       frontText: 'Front of the card',
-//       backText: 'Back of the card',
-//     ),
-//     const Flashcard(
-//       frontText: 'Hello',
-//       backText: 'Bye',
-//     ),
-//     const Flashcard(
-//       frontText: '1',
-//       backText: '2',
-//     )
-//   ]
-// };
-
 class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
   int index = 0;
   @override

@@ -11,6 +11,7 @@ import 'package:hirikana/services/hive_backup.dart';
 final key = StateProvider<Tuple2>((ref) => Tuple2('', ''));
 final dropdownValue = StateProvider<String>((ref) => 'Default');
 final categoriesandsets = StateProvider<Map>((ref) => db.categoriesandsetsDB);
+final restoreTrigger = StateProvider<bool>((ref) => false);
 
 class SetsScreen extends ConsumerStatefulWidget {
   SetsScreen({super.key});
