@@ -25,6 +25,7 @@ class CategoryandSets {
   // update the database
   void updateDataBase() {
     _myBox.put("CATEGORY", categoriesandsetsDB);
+    printDatabaseContent();
   }
 
   // update the database

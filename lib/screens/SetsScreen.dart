@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:kanavocab/data/flashcardDB.dart';
 import 'package:tuple/tuple.dart';
 import 'package:kanavocab/widgets/cards_widget.dart';
 import '../data/database.dart';
 import '../models/cards.dart';
+import '../models/flashcardmodel.dart';
 import '../utils/colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kanavocab/services/hive_backup.dart';
 
+import 'memorygame.dart';
+
 final key = StateProvider<Tuple2>((ref) => Tuple2('', ''));
-final dropdownValue = StateProvider<String>((ref) => 'Default');
+
 final categoriesandsets = StateProvider<Map>((ref) => db.categoriesandsetsDB);
+final dropdownValue = StateProvider<String>((ref) {
+  // Get the list of categories
+  List categories = ref.read(categoriesandsets).keys.toList();
+
+  // Set the initial value to the first category if the list is not empty, otherwise set it to 'Default'
+  return categories.isNotEmpty ? categories.first : 'Default';
+});
 final restoreTrigger = StateProvider<bool>((ref) => false);
 
 class SetsScreen extends ConsumerStatefulWidget {
@@ -52,12 +63,12 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
         backgroundColor: backGroundDark,
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 150),
+            padding: EdgeInsets.only(right: 190),
             child: DropdownButton<String>(
               value: ref.watch(dropdownValue),
               alignment: AlignmentDirectional.centerEnd,
               icon: Padding(
-                padding: const EdgeInsets.only(left: 15),
+                padding: const EdgeInsets.only(left: 45),
                 child: const Icon(Icons.arrow_downward),
               ),
               elevation: 16,
@@ -221,7 +232,9 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
             TextButton(
               child: Text("Edit"),
               onPressed: () {
+// Complete Edit category
                 Navigator.of(context).pop();
+                _showEditCategoryDialog(context, ref);
               },
             ),
           ],
@@ -332,5 +345,118 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
         );
       },
     );
+  }
+
+  void _showEditCategoryDialog(BuildContext context, WidgetRef ref) {
+    List<String> list = <String>[];
+    for (var key in ref.watch(categoriesandsets).keys.toList()) {
+      list.add(key.toString());
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Select which Category to Edit"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              for (int i = 0; i < list.length; i++)
+                ListTile(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showEditCategoryNameDialog(context, ref, list, i);
+                  },
+                  title: Text(list[i]),
+                )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showEditCategoryNameDialog(
+      BuildContext context, WidgetRef ref, List<String> list, int i) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Edit Category Name"),
+          content: TextFormField(
+            controller: myController,
+            decoration: InputDecoration(
+              hintText: 'Enter new name',
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: Text('Save'),
+              onPressed: () {
+                String oldName = list[i];
+                String newName = myController.text;
+                renameCategory(context, oldName, newName, ref);
+                myController.clear();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void renameCategory(
+      BuildContext context, String oldName, String newName, WidgetRef ref) {
+    if (ref.watch(categoriesandsets).containsKey(oldName)) {
+      List<Cards> flashcards =
+          ref.read(categoriesandsets)[oldName]!.cast<Cards>();
+
+      // Remove the old key and insert the new key with flashcards at the same index
+      Map<String, List<Cards>> categoriesAndSets = ref
+          .read(categoriesandsets.notifier)
+          .state
+          .map((key, value) => MapEntry(key, List<Cards>.from(value)));
+
+      int index = categoriesAndSets.keys.toList().indexOf(oldName);
+      categoriesAndSets.remove(oldName);
+      categoriesAndSets = {
+        ...categoriesAndSets.keys.take(index).toList().asMap().map(
+            (key, value) => MapEntry(value, categoriesAndSets[value] ?? [])),
+        newName: flashcards,
+        ...categoriesAndSets.keys.skip(index).toList().asMap().map(
+            (key, value) => MapEntry(value, categoriesAndSets[value] ?? [])),
+      };
+
+      ref.read(categoriesandsets.notifier).state = categoriesAndSets;
+
+      // Rename the category in viewcards2
+      Map<Tuple2, List<FlashcardModel>> viewCards2Data =
+          ref.read(viewcards2.notifier).state;
+      Map<Tuple2, List<FlashcardModel>> updatedViewCards2Data = {};
+
+      viewCards2Data.forEach((key, value) {
+        Tuple2 updatedKey = key;
+        if (key.item1 == oldName) {
+          updatedKey = Tuple2(newName, key.item2);
+        }
+        updatedViewCards2Data[updatedKey] = value;
+      });
+
+      ref.read(viewcards2.notifier).state = updatedViewCards2Data;
+    }
+
+    // Update the dropdownValue state to the new category name
+    ref.read(dropdownValue.notifier).state = newName;
+
+    db.updateDataBase2(ref.read(categoriesandsets));
+    flashcardDB.updateDataBase2(ref.read(viewcards2));
+    db.printDatabaseContent();
   }
 }
