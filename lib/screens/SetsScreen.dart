@@ -35,7 +35,7 @@ int selectedIndex = 0;
 final _myBox = Hive.box('myBox');
 CategoryandSets db = CategoryandSets();
 
-enum MenuOptions { category, newSet, backUp }
+enum MenuOptions { category, newSet, importSet, backUp }
 
 class _SetsScreenState extends ConsumerState<SetsScreen> {
   @override
@@ -111,6 +111,10 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
                     child: Text('New Set'),
                   ),
                   const PopupMenuItem<MenuOptions>(
+                    value: MenuOptions.importSet,
+                    child: Text('Import Set'),
+                  ),
+                  const PopupMenuItem<MenuOptions>(
                     value: MenuOptions.backUp,
                     child: Text('Back Up'),
                   ),
@@ -142,6 +146,9 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
                       }
                       if (check) return;
                       _addcards(name);
+                      break;
+                    case MenuOptions.importSet:
+                      // Handle 'Import Set' action
                       break;
                     case MenuOptions.backUp:
                       // Handle 'Back Up' action
