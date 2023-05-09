@@ -2,7 +2,7 @@
     package="com.example.kanavocab">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
    <application
-        android:label="kanavocab"
+        android:label="KanaVocab"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

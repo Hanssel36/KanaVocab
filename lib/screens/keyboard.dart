@@ -93,8 +93,8 @@ class _KeyboardScreenState extends ConsumerState<KeyboardScreen> {
     final lettersOnlyRegExp = RegExp(r'[a-z]');
     final lettersOnly = FilteringTextInputFormatter.allow(lettersOnlyRegExp);
 
-    return MaterialApp(
-      home: Builder(builder: (context) {
+    return Builder(
+      builder: (context) {
         return Scaffold(
           backgroundColor: backGroundDark,
           appBar: AppBar(
@@ -104,7 +104,7 @@ class _KeyboardScreenState extends ConsumerState<KeyboardScreen> {
             leading: IconButton(
               onPressed: () {
                 if (notPaused) {
-                  GoRouter.of(context).pushNamed(selectionScreen);
+                  GoRouter.of(context).pushNamed(homeScreen);
                 }
               },
               icon: const Icon(Icons.arrow_back),
@@ -147,7 +147,7 @@ class _KeyboardScreenState extends ConsumerState<KeyboardScreen> {
             ),
           ]),
         );
-      }),
+      },
     );
   }
 }

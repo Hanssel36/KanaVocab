@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:kanavocab/utils/colors.dart';
 import 'package:kanavocab/utils/hiragana_char.dart' as charData;
-import 'package:kanavocab/my_route.dart';
 
 class ChartsScreen extends StatelessWidget {
   const ChartsScreen({super.key});
@@ -23,10 +21,6 @@ class ChartsScreen extends StatelessWidget {
               )
             ]),
             title: const Text("Charts"),
-            leading: IconButton(
-              onPressed: () => GoRouter.of(context).pushNamed(homeScreen),
-              icon: const Icon(Icons.arrow_back),
-            ),
           ),
           backgroundColor: backGroundDark,
           body: TabBarView(children: [

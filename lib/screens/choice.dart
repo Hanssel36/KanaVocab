@@ -122,8 +122,8 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
     //ans.shuffle();
     List<int> rnglist = [0, 1, 2, 3];
 
-    return MaterialApp(
-      home: Builder(builder: (context) {
+    return Builder(
+      builder: (context) {
         return Scaffold(
           backgroundColor: backGroundDark,
           appBar: AppBar(
@@ -133,7 +133,7 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
             leading: IconButton(
               onPressed: () {
                 if (notPaused) {
-                  GoRouter.of(context).pushNamed(selectionScreen);
+                  GoRouter.of(context).pushNamed(homeScreen);
                 }
               },
               icon: const Icon(Icons.arrow_back),
@@ -188,7 +188,7 @@ class _ChoiceScreenState extends ConsumerState<ChoiceScreen> {
             ),
           ]),
         );
-      }),
+      },
     );
   }
 }

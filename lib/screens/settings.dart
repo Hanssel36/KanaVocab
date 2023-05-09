@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:kanavocab/screens/SetsScreen.dart';
 import 'package:kanavocab/utils/colors.dart';
-import '../../my_route.dart';
 import 'package:kanavocab/services/hive_backup.dart';
 // class SettingsScreen extends StatelessWidget {
 //   const SettingsScreen({super.key});
@@ -29,10 +27,6 @@ class SettingsScreen extends ConsumerWidget {
         appBar: AppBar(
           backgroundColor: backGroundDark,
           title: const Text("Settings"),
-          leading: IconButton(
-            onPressed: () => GoRouter.of(context).pushNamed(homeScreen),
-            icon: const Icon(Icons.arrow_back),
-          ),
         ),
         body: Column(children: [
           MuteBox(),

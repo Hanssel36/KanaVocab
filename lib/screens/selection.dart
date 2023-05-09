@@ -4,10 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:kanavocab/utils/colors.dart';
 import 'package:kanavocab/widgets/hiragana_select.dart';
 import 'package:tuple/tuple.dart';
-import '../main.dart';
 import '../my_route.dart';
 
 final proquestion = StateProvider<List<Tuple2<String, String>>>((ref) => []);
+final gamemode = StateProvider<bool>((ref) => true);
+final kanachoice = StateProvider<bool>((ref) => true);
 
 class SelectionScreen extends ConsumerStatefulWidget {
   const SelectionScreen({super.key});
@@ -503,12 +504,30 @@ class _SelectionScreenState extends ConsumerState<SelectionScreen> {
           elevation: 0,
           backgroundColor: backGroundDark,
           title: const Text("Selection Screen"),
-          leading: IconButton(
-            onPressed: () => GoRouter.of(context).pushNamed(homeScreen),
-            icon: const Icon(Icons.arrow_back),
-          ),
         ),
         body: ListView(children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    ref.read(kanachoice.notifier).state =
+                        !ref.read(kanachoice.notifier).state;
+                  },
+                  child: Text(
+                      style: const TextStyle(fontSize: 25),
+                      ref.watch(kanachoice) ? "\u3042" : "\u30A2")),
+              ElevatedButton(
+                  onPressed: () {
+                    ref.read(gamemode.notifier).state =
+                        !ref.read(gamemode.notifier).state;
+                  },
+                  child: Icon(
+                    ref.watch(gamemode) ? Icons.keyboard : Icons.gamepad,
+                    size: 25,
+                  ))
+            ],
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -599,7 +618,7 @@ class _SelectionScreenState extends ConsumerState<SelectionScreen> {
     );
   }
 
-  void playGame(BuildContext context, String mode) {
+  void playGame(BuildContext context, bool mode) {
     _loadQuestions(_selectedLines);
 
     ref.read(proquestion.notifier).state.shuffle();
@@ -610,10 +629,10 @@ class _SelectionScreenState extends ConsumerState<SelectionScreen> {
         ),
       );
     } else {
-      if (mode == 'choice') {
-        GoRouter.of(context).pushNamed(choiceScreen);
-      } else {
+      if (mode) {
         GoRouter.of(context).pushNamed(keyboardScreen);
+      } else {
+        GoRouter.of(context).pushNamed(choiceScreen);
       }
     }
   }

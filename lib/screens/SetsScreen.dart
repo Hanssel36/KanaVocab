@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:kanavocab/data/flashcardDB.dart';
 import 'package:tuple/tuple.dart';
 import 'package:kanavocab/widgets/cards_widget.dart';
 import '../data/database.dart';
@@ -62,84 +61,96 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
       appBar: AppBar(
         backgroundColor: backGroundDark,
         actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 190),
-            child: DropdownButton<String>(
-              value: ref.watch(dropdownValue),
-              alignment: AlignmentDirectional.centerEnd,
-              icon: Padding(
-                padding: const EdgeInsets.only(left: 45),
-                child: const Icon(Icons.arrow_downward),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: DropdownButton<String>(
+                  value: ref.watch(dropdownValue),
+                  icon: const Icon(Icons.arrow_downward),
+                  elevation: 16,
+                  style: const TextStyle(color: Colors.blueAccent),
+                  underline: Container(
+                    height: 2,
+                    color: Colors.white24,
+                  ),
+                  onChanged: (String? value) {
+                    // This is called when the user selects an item.
+                    ref.read(dropdownValue.notifier).state = value!;
+                  },
+                  items: list.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Container(
+                        // Add this container
+                        width: 100, // Set a fixed width for the drop-down items
+                        child: Text(
+                          value,
+                          overflow: TextOverflow
+                              .ellipsis, // Truncate the text if it overflows
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
               ),
-              elevation: 16,
-              style: const TextStyle(color: Colors.blueAccent),
-              underline: Container(
-                height: 2,
-                color: Colors.white24,
-              ),
-              onChanged: (String? value) {
-                // This is called when the user selects an item.
-
-                ref.read(dropdownValue.notifier).state = value!;
-              },
-              items: list.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
             ),
           ),
-          PopupMenuButton<MenuOptions>(
-            itemBuilder: (BuildContext context) =>
-                <PopupMenuEntry<MenuOptions>>[
-              const PopupMenuItem<MenuOptions>(
-                value: MenuOptions.category,
-                child: Text('Category'),
-              ),
-              const PopupMenuItem<MenuOptions>(
-                value: MenuOptions.newSet,
-                child: Text('New Set'),
-              ),
-              const PopupMenuItem<MenuOptions>(
-                value: MenuOptions.backUp,
-                child: Text('Back Up'),
+          Row(
+            children: [
+              PopupMenuButton<MenuOptions>(
+                itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<MenuOptions>>[
+                  const PopupMenuItem<MenuOptions>(
+                    value: MenuOptions.category,
+                    child: Text('Category'),
+                  ),
+                  const PopupMenuItem<MenuOptions>(
+                    value: MenuOptions.newSet,
+                    child: Text('New Set'),
+                  ),
+                  const PopupMenuItem<MenuOptions>(
+                    value: MenuOptions.backUp,
+                    child: Text('Back Up'),
+                  ),
+                ],
+                icon: Icon(Icons.more_vert),
+                onSelected: (MenuOptions result) async {
+                  switch (result) {
+                    case MenuOptions.category:
+                      // Handle 'Category' action
+                      _showCategoriesOptionsDialog(context, ref);
+                      break;
+                    case MenuOptions.newSet:
+                      // Handle 'New Set' action
+                      final String? name = await _openDialog(context);
+                      if (name == null || name == '') return;
+                      int n = ref
+                          .watch(categoriesandsets)[ref.watch(dropdownValue)]
+                          .length;
+                      bool check = false;
+
+                      for (int i = 0; i < n; i++) {
+                        if (ref
+                                .watch(categoriesandsets)[
+                                    ref.watch(dropdownValue)][i]
+                                .title ==
+                            name) {
+                          check = true;
+                        }
+                      }
+                      if (check) return;
+                      _addcards(name);
+                      break;
+                    case MenuOptions.backUp:
+                      // Handle 'Back Up' action
+                      await backupHiveBox('myBox');
+                      break;
+                  }
+                },
               ),
             ],
-            icon: Icon(Icons.more_vert),
-            onSelected: (MenuOptions result) async {
-              switch (result) {
-                case MenuOptions.category:
-                  // Handle 'Category' action
-                  _showCategoriesOptionsDialog(context, ref);
-                  break;
-                case MenuOptions.newSet:
-                  // Handle 'New Set' action
-                  final String? name = await _openDialog(context);
-                  if (name == null || name == '') return;
-                  int n = ref
-                      .watch(categoriesandsets)[ref.watch(dropdownValue)]
-                      .length;
-                  bool check = false;
-
-                  for (int i = 0; i < n; i++) {
-                    if (ref
-                            .watch(categoriesandsets)[ref.watch(dropdownValue)]
-                                [i]
-                            .title ==
-                        name) {
-                      check = true;
-                    }
-                  }
-                  if (check) return;
-                  _addcards(name);
-                  break;
-                case MenuOptions.backUp:
-                  // Handle 'Back Up' action
-                  await backupHiveBox('myBox');
-                  break;
-              }
-            },
           ),
         ],
       ),

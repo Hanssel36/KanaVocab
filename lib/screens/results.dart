@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kanavocab/screens/selection.dart';
 import 'package:kanavocab/utils/colors.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kanavocab/main.dart';
 import 'package:kanavocab/my_route.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -59,7 +59,7 @@ class ResultScreen extends ConsumerWidget {
                     ),
                     onPressed: () => GoRouter.of(context).pushNamed(homeScreen),
                     child: const Text(
-                      "Home",
+                      "Selection Screen",
                       style: TextStyle(fontSize: 30),
                     ),
                   ),
@@ -73,7 +73,7 @@ class ResultScreen extends ConsumerWidget {
                           left: 30, right: 30, top: 5, bottom: 5)),
                     ),
                     onPressed: () {
-                      if (mode == "keyboard") {
+                      if (mode) {
                         GoRouter.of(context).pushNamed(keyboardScreen);
                       } else {
                         GoRouter.of(context).pushNamed(choiceScreen);
@@ -82,22 +82,6 @@ class ResultScreen extends ConsumerWidget {
                     },
                     child: const Text(
                       "Try Again",
-                      style: TextStyle(fontSize: 30),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: const MaterialStatePropertyAll(tiles),
-                      padding: MaterialStateProperty.all(const EdgeInsets.only(
-                          left: 30, right: 30, top: 5, bottom: 5)),
-                    ),
-                    onPressed: () =>
-                        GoRouter.of(context).pushNamed(selectionScreen),
-                    child: const Text(
-                      "Selection Screen",
                       style: TextStyle(fontSize: 30),
                     ),
                   ),
