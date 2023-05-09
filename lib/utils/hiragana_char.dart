@@ -226,12 +226,12 @@ Map<String, String> hiraganaCharacterMap = {
   "ぴゃ": "pya",
   "ぴゅ": "pyu",
   "ぴょ": "pyo",
-  "みゃ": "mya",
-  "みゅ": "myu",
-  "みょ": "myo",
   "りゃ": "rya",
   "りゅ": "ryu",
-  "りょ": "ryo"
+  "りょ": "ryo",
+  "みゃ": "mya",
+  "みゅ": "myu",
+  "みょ": "myo"
 };
 
 Map<String, List> hiraganaMap = {
@@ -266,6 +266,7 @@ Map<String, List> hiraganaCombinationMap = {
   "び": ["びゃ", "びゅ", "びょ"],
   "ぴ": ["ぴゃ", "ぴゅ", "ぴょ"],
   "ま": ["みゃ", "みゅ", "みょ"],
+  "り": ["りゃ", "りゅ", "りょ"]
 };
 
 Map<String, String> katakanaCharacterMap = {
