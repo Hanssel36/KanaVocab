@@ -7,13 +7,13 @@ import '../models/flashcardmodel.dart';
 import '../models/tuple2_adapter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-Future<void> backupHiveBox(String boxName) async {
+Future<bool> backupHiveBox(String boxName) async {
   // Request storage permission
   PermissionStatus permissionStatus = await Permission.storage.request();
   if (!permissionStatus.isGranted) {
     // Handle permission denied
     print('Storage permission denied');
-    return;
+    return false;
   }
 
   // Get the box
@@ -47,6 +47,8 @@ Future<void> backupHiveBox(String boxName) async {
   await backupFile.writeAsString(jsonBackup);
 
   print('Backup saved at ${backupFile.path}');
+
+  return true;
 }
 
 Future<void> restoreHiveBox(String boxName) async {

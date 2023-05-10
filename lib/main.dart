@@ -6,7 +6,6 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:kanavocab/models/flashcardmodel.dart';
 import 'package:kanavocab/models/tuple2_adapter.dart';
 import 'package:kanavocab/widgets/navBar.dart';
-import 'package:flutter/services.dart';
 
 void main() async {
   Hive.registerAdapter(CardsAdapter());
@@ -16,7 +15,7 @@ void main() async {
 
   // open box
 
-  var box = await Hive.openBox('myBox');
+  await Hive.openBox('myBox');
   runApp(const ProviderScope(child: MyApp()));
 }
 

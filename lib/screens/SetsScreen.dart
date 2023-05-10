@@ -8,7 +8,6 @@ import '../models/flashcardmodel.dart';
 import '../utils/colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kanavocab/services/hive_backup.dart';
-
 import 'memorygame.dart';
 
 final key = StateProvider<Tuple2>((ref) => Tuple2('', ''));
@@ -154,7 +153,11 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
                           check = true;
                         }
                       }
-                      if (check) return;
+                      if (check) {
+                        showCustomSnackBar(context, 'This set already exists!');
+                        return;
+                      }
+
                       _addcards(name);
                       break;
                     case MenuOptions.importSet:
@@ -162,7 +165,13 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
                       break;
                     case MenuOptions.backUp:
                       // Handle 'Back Up' action
-                      await backupHiveBox('myBox');
+                      bool backupSuccessful = await backupHiveBox('myBox');
+                      if (backupSuccessful) {
+                        showCustomSnackBar(context, 'Backup successful!');
+                      } else {
+                        showCustomSnackBar(
+                            context, 'Backup failed. Please try again.');
+                      }
                       break;
                   }
                 },
@@ -171,23 +180,40 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
           ),
         ],
       ),
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Column(
-            children: [
-              for (int i = 0;
-                  i <
-                      ref
-                          .watch(categoriesandsets)[ref.watch(dropdownValue)]
-                          .length;
-                  i++)
-                CardsWidget(
-                    card: ref.watch(categoriesandsets)[ref.watch(dropdownValue)]
-                        [i]),
-            ],
-          )
-        ],
+      body: ListView(children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                for (int i = 0;
+                    i <
+                        ref
+                            .watch(categoriesandsets)[ref.watch(dropdownValue)]
+                            .length;
+                    i++)
+                  CardsWidget(
+                      card:
+                          ref.watch(categoriesandsets)[ref.watch(dropdownValue)]
+                              [i]),
+              ],
+            )
+          ],
+        ),
+      ]),
+    );
+  }
+
+  void showCustomSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.black.withOpacity(0.8),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        duration: Duration(seconds: 2),
       ),
     );
   }
@@ -341,11 +367,11 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Add an option'),
+          title: Text('Add new Category'),
           content: TextFormField(
             controller: myController,
             decoration: InputDecoration(
-              hintText: 'Option name',
+              hintText: 'Category name',
             ),
           ),
           actions: <Widget>[

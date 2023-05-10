@@ -12,15 +12,12 @@ class FlashCardsDB {
   void loadData() {
     Map<dynamic, dynamic> dataFromHive = _myBox.get("FLASHCARD");
 
-    if (dataFromHive != null) {
-      // Convert Tuple2Adapter keys back to Tuple2 and cast the types
-      dataFromHive.forEach((key, value) {
-        String jsonString = json.encode(key);
-        Map<String, dynamic> jsonMap = json.decode(jsonString);
-        viewcardsDB[Tuple2Adapter.fromJson(jsonMap).toTuple()] =
-            value.cast<FlashcardModel>();
-      });
-    }
+    dataFromHive.forEach((key, value) {
+      String jsonString = json.encode(key);
+      Map<String, dynamic> jsonMap = json.decode(jsonString);
+      viewcardsDB[Tuple2Adapter.fromJson(jsonMap).toTuple()] =
+          value.cast<FlashcardModel>();
+    });
   }
 
   // Update the database
