@@ -6,6 +6,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:kanavocab/models/flashcardmodel.dart';
 import 'package:kanavocab/models/tuple2_adapter.dart';
 import 'package:kanavocab/widgets/navBar.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   Hive.registerAdapter(CardsAdapter());
@@ -24,6 +25,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    //   DeviceOrientation.portraitDown,
+    // ]);  ###########Stop Rotation#################
+
     return MaterialApp.router(
       routerConfig: router,
     );
