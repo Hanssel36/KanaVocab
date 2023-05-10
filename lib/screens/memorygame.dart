@@ -135,7 +135,7 @@ class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
     });
   }
 
-  void _submit(Tuple2 flashkey) {
+  void _submit(Tuple2 flashkey, BuildContext dialogContext) {
     if (!ref.watch(viewcards2).containsKey(flashkey)) {
       ref.read(viewcards2.notifier).state[flashkey] = [];
     }
@@ -154,16 +154,18 @@ class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
     flashcardDB.updateDataBase2(ref.read(viewcards2));
     flashcardDB.printDatabaseContent();
 
-    Navigator.of(context).pop();
+    // Use the dialogContext to pop the dialog
+    Navigator.of(dialogContext).pop();
+
     firstController.clear();
     secondController.clear();
   }
 
-  Future<String?> _openDialog(BuildContext context, Tuple2 flashkey) {
-    return showDialog(
+  Future<void> _openDialog(BuildContext context, Tuple2 flashkey) async {
+    await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Create Set"),
+      builder: (dialogContext) => AlertDialog(
+        title: const Text("Create Flashcard"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -171,20 +173,24 @@ class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
               autofocus: true,
               controller: firstController,
               decoration: InputDecoration(hintText: "Enter Japanese word"),
-              onSubmitted: (_) => _submit(flashkey),
+              onSubmitted: (_) {
+                _submit(flashkey, dialogContext);
+              },
             ),
             TextField(
               autofocus: true,
               controller: secondController,
               decoration: InputDecoration(hintText: "Enter English word"),
-              onSubmitted: (_) => _submit(flashkey),
+              onSubmitted: (_) {
+                _submit(flashkey, dialogContext);
+              },
             ),
           ],
         ),
         actions: [
           TextButton(
               onPressed: () {
-                _submit(flashkey);
+                _submit(flashkey, dialogContext);
               },
               child: const Text("Enter"))
         ],

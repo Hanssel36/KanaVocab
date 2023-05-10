@@ -16,6 +16,19 @@ class CardsWidget extends ConsumerStatefulWidget {
 }
 
 class _CardsState extends ConsumerState<CardsWidget> {
+  String _selectedCategory = '';
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (ref.watch(categoriesandsets).keys.isNotEmpty) {
+        setState(() {
+          _selectedCategory = ref.watch(categoriesandsets).keys.first;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -192,13 +205,113 @@ class _CardsState extends ConsumerState<CardsWidget> {
               ListTile(
                 leading: Icon(Icons.move_to_inbox),
                 title: Text('Move'),
-                onTap: () {
+                onTap: () async {
                   // Perform move operation
+                  final String? moveToCategory = await _moveDialog(context);
+                  if (moveToCategory == null ||
+                      moveToCategory == ref.watch(dropdownValue)) {
+                    Navigator.pop(context);
+                    return;
+                  }
+
+                  // Remove card from the current category
+                  final card = ref
+                      .watch(categoriesandsets)[ref.watch(dropdownValue)]
+                      .firstWhere((card) => card.title == widget.card.title);
+
+                  List<dynamic> oldState =
+                      ref.watch(categoriesandsets)[ref.watch(dropdownValue)];
+
+                  oldState.remove(card);
+
+                  ref.read(categoriesandsets.notifier).state = {
+                    ...ref.watch(categoriesandsets),
+                    ref.watch(dropdownValue): oldState.toList(),
+                  };
+
+                  // Add card to the destination category
+                  List<dynamic> newState =
+                      ref.watch(categoriesandsets)[moveToCategory]!;
+
+                  newState.add(card);
+
+                  ref.read(categoriesandsets.notifier).state = {
+                    ...ref.watch(categoriesandsets),
+                    moveToCategory: newState.toList(),
+                  };
+
+                  // Move the flashcards
+                  Tuple2 oldKey =
+                      Tuple2(ref.watch(dropdownValue), widget.card.title);
+                  Tuple2 newKey = Tuple2(moveToCategory, widget.card.title);
+
+                  List<FlashcardModel> value =
+                      ref.watch(viewcards2)[oldKey] ?? [];
+
+                  Map<Tuple2, List<FlashcardModel>> newMap = {
+                    ...ref.watch(viewcards2)
+                  }; // Create a copy of the original map
+
+                  newMap.remove(oldKey);
+                  newMap[newKey] =
+                      value; // Add the new key-value pair with the same value
+
+                  ref.read(viewcards2.notifier).state = newMap;
+
+                  db.updateDataBase2(ref.read(categoriesandsets));
+                  flashcardDB.updateDataBase2(ref.read(viewcards2));
+                  db.printDatabaseContent();
+
                   Navigator.pop(context);
                 },
               ),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  Future<String?> _moveDialog(BuildContext context) {
+    String selectedCategory = _selectedCategory;
+
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Move to Category'),
+              content: DropdownButton<String>(
+                value: selectedCategory,
+                icon: const Icon(Icons.arrow_downward),
+                iconSize: 24,
+                elevation: 16,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedCategory = newValue!;
+                  });
+                },
+                items: ref
+                    .watch(categoriesandsets)
+                    .keys
+                    .map<DropdownMenuItem<String>>((dynamic category) {
+                  return DropdownMenuItem<String>(
+                    value: category as String,
+                    child: Text(category),
+                  );
+                }).toList(),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(selectedCategory);
+                  },
+                  child: const Text('Move'),
+                ),
+              ],
+            );
+          },
         );
       },
     );

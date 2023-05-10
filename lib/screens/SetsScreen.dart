@@ -50,6 +50,16 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Add this line to refresh the state when the widget rebuilds
+    Future.delayed(Duration.zero, () {
+      ref.read(restoreTrigger.notifier).state = !ref.read(restoreTrigger);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     List<String> list = <String>[];
     for (var key in ref.read(categoriesandsets).keys.toList()) {
