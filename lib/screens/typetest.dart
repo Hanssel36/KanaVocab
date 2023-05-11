@@ -45,10 +45,18 @@ class _TestScreenState extends ConsumerState<TestScreen> {
     });
   }
 
+  // Add a new variable to hold the shuffled flashcards
+  late List<FlashcardModel> flashcards;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final flashkey = ref.watch(key);
+    flashcards = List.from(ref.watch(viewcards2)[flashkey]!);
+    flashcards.shuffle();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final flashkey = ref.watch(key);
-    List<FlashcardModel> flashcards = ref.watch(viewcards2)[flashkey]!;
     final currentCard = flashcards[currentIndex];
 
     // Update this function to increment the counters and show the results dialog

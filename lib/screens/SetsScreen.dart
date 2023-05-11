@@ -343,6 +343,17 @@ class _SetsScreenState extends ConsumerState<SetsScreen> {
             ElevatedButton(
               child: Text('Yes'),
               onPressed: () {
+                if (ref.watch(categoriesandsets).length < 2) {
+                  // SnackBar needs to be added
+                  Navigator.of(context).pop();
+                  return;
+                }
+
+                if (i == 0) {
+                  List categories = ref.read(categoriesandsets).keys.toList();
+                  ref.read(dropdownValue.notifier).state = categories[1];
+                }
+
                 setState(() {
                   ref.read(categoriesandsets.notifier).state.remove(list[i]);
                 });

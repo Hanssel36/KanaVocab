@@ -57,7 +57,10 @@ class _CardsState extends ConsumerState<CardsWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(widget.card.title),
+                Text(
+                  widget.card.title,
+                  style: TextStyle(color: Colors.white),
+                ),
               ],
             ),
           ),

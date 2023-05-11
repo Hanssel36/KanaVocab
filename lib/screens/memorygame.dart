@@ -54,14 +54,14 @@ class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
       ),
       body: ListView(
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ref.watch(viewcards2)[flashkey] != null &&
-                      ref.watch(viewcards2)[flashkey] != [] &&
-                      ref.watch(viewcards2)[flashkey]!.isNotEmpty &&
-                      ref.watch(viewcards2).containsKey(flashkey)
-                  ? Padding(
+          ref.watch(viewcards2)[flashkey] != null &&
+                  ref.watch(viewcards2)[flashkey] != [] &&
+                  ref.watch(viewcards2)[flashkey]!.isNotEmpty &&
+                  ref.watch(viewcards2).containsKey(flashkey)
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Padding(
                       padding: const EdgeInsets.only(top: 30),
                       child: Flashcard(
                         frontText:
@@ -69,45 +69,45 @@ class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
                         backText:
                             ref.watch(viewcards2)[flashkey]![index].backText,
                       ),
-                    )
-                  : const Text("Add cards"),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      if (!ref.watch(viewcards2).containsKey(flashkey)) return;
-                      _goBack(flashkey);
-                    },
-                    iconSize: 50,
-                    icon: const Icon(
-                      Icons.arrow_left,
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      if (!ref.watch(viewcards2).containsKey(flashkey)) return;
-                      _goNext(flashkey);
-                    },
-                    iconSize: 50,
-                    icon: const Icon(
-                      Icons.arrow_right,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            if (!ref.watch(viewcards2).containsKey(flashkey))
+                              return;
+                            _goBack(flashkey);
+                          },
+                          iconSize: 50,
+                          icon: const Icon(
+                            Icons.arrow_left,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            if (!ref.watch(viewcards2).containsKey(flashkey))
+                              return;
+                            _goNext(flashkey);
+                          },
+                          iconSize: 50,
+                          icon: const Icon(
+                            Icons.arrow_right,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  GoRouter.of(context).pushNamed(typeTest);
-                },
-                child: Text("Take Test"),
-                style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStatePropertyAll<Color>(Colors.blueAccent),
-                ),
-              ),
-              ref.watch(viewcards2).containsKey(flashkey)
-                  ? Column(
+                    ElevatedButton(
+                      onPressed: () {
+                        GoRouter.of(context).pushNamed(typeTest);
+                      },
+                      child: Text("Take Test"),
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll<Color>(Colors.blueAccent),
+                      ),
+                    ),
+                    Column(
                       children: [
                         for (int i = 0;
                             i < ref.watch(viewcards2)[flashkey]!.length;
@@ -119,9 +119,17 @@ class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
                                   ref.watch(viewcards2)[flashkey]![i].backText)
                       ],
                     )
-                  : Text("Add cards")
-            ],
-          ),
+                  ],
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Add Flashcards",
+                      style: TextStyle(fontSize: 25, color: Colors.white),
+                    ),
+                  ],
+                ),
         ],
       ),
     );
@@ -240,8 +248,14 @@ class FlashcardView extends ConsumerWidget {
                 Expanded(
                   child: Column(
                     children: [
-                      Text(front),
-                      Text(back),
+                      Text(
+                        front,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Text(
+                        back,
+                        style: TextStyle(color: Colors.white60),
+                      ),
                     ],
                   ),
                 ),
