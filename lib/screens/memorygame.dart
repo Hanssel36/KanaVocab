@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kanavocab/data/flashcardDB.dart';
 import 'package:kanavocab/models/flashcardmodel.dart';
 import 'package:kanavocab/screens/SetsScreen.dart';
 import 'package:tuple/tuple.dart';
+import '../my_route.dart';
 import '../utils/colors.dart';
 import 'package:kanavocab/widgets/flashcard.dart';
 import 'package:hive/hive.dart';
@@ -93,6 +95,16 @@ class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
                     ),
                   ),
                 ],
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  GoRouter.of(context).pushNamed(typeTest);
+                },
+                child: Text("Take Test"),
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStatePropertyAll<Color>(Colors.blueAccent),
+                ),
               ),
               ref.watch(viewcards2).containsKey(flashkey)
                   ? Column(
@@ -283,20 +295,6 @@ class FlashcardView extends ConsumerWidget {
                     ...ref.watch(viewcards2),
                     flashkey: oldList.toList(),
                   };
-
-                  // final card = ref
-                  //     .watch(cardsets2)
-                  //     .firstWhere((card) => card.title == widget.title);
-
-                  // List<dynamic> oldState = ref.read(cardsets2);
-
-                  // oldState.remove(card);
-
-                  // ref
-                  //     .read(cardsets2.notifier)
-                  //     .update((state) => oldState.toList());
-
-                  // ref.read(check2.notifier).state.remove(card.title);
 
                   flashcardDB.updateDataBase2(ref.read(viewcards2));
 

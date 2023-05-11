@@ -5,6 +5,7 @@ import 'package:kanavocab/screens/keyboard.dart';
 import 'package:kanavocab/screens/selection.dart';
 import 'package:kanavocab/screens/settings.dart';
 import 'package:kanavocab/screens/chart.dart';
+import 'package:kanavocab/screens/typetest.dart';
 import 'main.dart';
 import 'package:kanavocab/screens/SetsScreen.dart';
 import 'package:kanavocab/screens/memorygame.dart';
@@ -17,6 +18,7 @@ const String keyboardScreen = 'keyboard';
 const String choiceScreen = 'choice';
 const String setScreen = 'sets';
 const String flashcardScreen = 'flashcard';
+const String typeTest = 'typetest';
 
 final GoRouter router = GoRouter(
   routes: <RouteBase>[
@@ -73,6 +75,13 @@ final GoRouter router = GoRouter(
           name: setScreen,
           builder: (BuildContext context, GoRouterState state) {
             return SetsScreen();
+          },
+        ),
+        GoRoute(
+          path: 'typetest',
+          name: typeTest,
+          builder: (BuildContext context, GoRouterState state) {
+            return TypeTest();
           },
         ),
       ],
