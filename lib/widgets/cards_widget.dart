@@ -39,9 +39,6 @@ class _CardsState extends ConsumerState<CardsWidget> {
           _showBottomSheet(context);
         },
         onTap: () {
-          print(ref.read(viewcards2)[sizeKey]!.length);
-
-          // keep
           ref.read(key.notifier).state =
               Tuple2(ref.watch(dropdownValue), widget.card.title);
 
