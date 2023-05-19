@@ -155,15 +155,44 @@ class _MemoryGameScreenState extends ConsumerState<MemoryGameScreen> {
     });
   }
 
+  void showCustomSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.black.withOpacity(0.8),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
   void _submit(Tuple2 flashkey, BuildContext dialogContext) {
     if (!ref.watch(viewcards2).containsKey(flashkey)) {
       ref.read(viewcards2.notifier).state[flashkey] = [];
     }
-    if (firstController.text == '' || secondController.text == '') return;
+    if (firstController.text == '' || secondController.text == '') {
+      Navigator.of(dialogContext).pop();
+      return;
+    }
 
     List<FlashcardModel>? oldState = ref.read(viewcards2)[flashkey];
 
-    oldState!.add(FlashcardModel(
+    if (oldState!.any((element) =>
+        element.frontText == firstController.text &&
+        element.backText.toLowerCase() ==
+            secondController.text.toLowerCase())) {
+      // Flashcard already exists, do nothing
+      showCustomSnackBar(context, 'Flashcard Already in Set!');
+      Navigator.of(dialogContext).pop();
+      firstController.clear();
+      secondController.clear();
+      return;
+    }
+
+    oldState.add(FlashcardModel(
         frontText: firstController.text, backText: secondController.text));
 
     ref.read(viewcards2.notifier).state = {

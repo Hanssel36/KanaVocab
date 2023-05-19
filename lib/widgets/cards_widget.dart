@@ -31,6 +31,7 @@ class _CardsState extends ConsumerState<CardsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final sizeKey = Tuple2(ref.watch(dropdownValue), widget.card.title);
     return SizedBox(
       width: 300,
       child: InkWell(
@@ -38,6 +39,9 @@ class _CardsState extends ConsumerState<CardsWidget> {
           _showBottomSheet(context);
         },
         onTap: () {
+          print(ref.read(viewcards2)[sizeKey]!.length);
+
+          // keep
           ref.read(key.notifier).state =
               Tuple2(ref.watch(dropdownValue), widget.card.title);
 
@@ -57,9 +61,22 @@ class _CardsState extends ConsumerState<CardsWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  widget.card.title,
-                  style: TextStyle(color: Colors.white),
+                Column(
+                  children: [
+                    Text(
+                      widget.card.title,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    ref.read(viewcards2)[sizeKey] != null
+                        ? Text(
+                            '${ref.read(viewcards2)[sizeKey]!.length} cards',
+                            style: TextStyle(color: Colors.white60),
+                          )
+                        : Text(
+                            '0 cards',
+                            style: TextStyle(color: Colors.white60),
+                          ),
+                  ],
                 ),
               ],
             ),
